@@ -19,10 +19,15 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include
 
+from main.views import pageNotFound
+
+
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path('admin/', admin.site.urls, name='admin'),
     path('', include('main.urls'))
 ]
+
+handler404 = pageNotFound
 
 
 if settings.DEBUG:
