@@ -10,5 +10,5 @@ class HomePageView(TemplateView):
         context = super().get_context_data(**kwargs)
         context['title'] = 'Главная'
         return context
-
+    pass
 
