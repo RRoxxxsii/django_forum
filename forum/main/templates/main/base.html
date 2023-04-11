@@ -19,7 +19,7 @@
         </a>
 
         <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
-          <li><a href="{% url 'home' %}" class="nav-link px-2 text-secondary">Home</a></li>
+          <li><a href="{% url 'main:home' %}" class="nav-link px-2 text-secondary">Home</a></li>
           <li><a href="#" class="nav-link px-2 text-white">Features</a></li>
           <li><a href="#" class="nav-link px-2 text-white">Pricing</a></li>
           <li><a href="#" class="nav-link px-2 text-white">FAQs</a></li>
@@ -28,17 +28,24 @@
             {% if user.is_superuser %}
           <li><a href="{% url 'admin:index' %}" class="nav-link px-2 text-white">Admin panel</a></li>
             {% endif %}
-
         </ul>
+
 
         <form class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3" role="search">
           <input type="search" class="form-control form-control-dark text-bg-dark" placeholder="Search..." aria-label="Search">
         </form>
 
+          {% if not user.is_authenticated %}
         <div class="text-end">
-          <button type="button" class="btn btn-outline-light me-2">Login</button>
-          <button type="button" class="btn btn-warning">Sign-up</button>
+          <a href="{% url 'account:login' %}"button type="button" class="btn btn-outline-light me-2">Login</a>
+          <a href="" button type="button" class="btn btn-warning">Sign-up</a>
         </div>
+          {% else %}
+          <div class="text-end">
+            <a href="{% url 'account:logout' %}"button type="button" class="btn btn-outline-light me-2">Logout</a>
+
+          </div>
+          {% endif %}
       </div>
     </div>
   </header>
