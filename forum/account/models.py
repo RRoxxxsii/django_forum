@@ -32,7 +32,7 @@ class CustomAccountManager(BaseUserManager):
     def create_user(self, email, user_name, password, **other_fields):
 
         if not email:
-            raise ValueError(_('You must provide an email address'))
+            raise ValueError(_('Необходимо ввести адрес электронной почты'))
 
         email = self.normalize_email(email)
         user = self.model(email=email, user_name=user_name,
@@ -42,8 +42,9 @@ class CustomAccountManager(BaseUserManager):
 
         return user
 
+
 class Author(AbstractBaseUser, PermissionsMixin):
-    email = models.EmailField(_('email address'), unique=True)
+    email = models.EmailField(_('почтовый адрес'), unique=True)
     user_name = models.CharField(max_length=150)
     mobile = models.CharField(max_length=20, blank=True)
 
@@ -59,8 +60,8 @@ class Author(AbstractBaseUser, PermissionsMixin):
     REQUIRED_FIELDS = ['user_name']
 
     class Meta:
-        verbose_name = "Accounts"
-        verbose_name_plural = "Accounts"
+        verbose_name = "Аккаунт"
+        verbose_name_plural = "Аккаунты"
 
     def __str__(self):
         return self.user_name
@@ -69,7 +70,11 @@ class Author(AbstractBaseUser, PermissionsMixin):
         send_mail(
             subject,
             message,
-            'l@1.com',
+            'djangowebforum@gmail.com',
             [self.email],
             fail_silently=False,
         )
+
+    def save(self, *args, **kwargs):
+        self.email = self.email.lower()
+        super(Author, self).save(*args, **kwargs)

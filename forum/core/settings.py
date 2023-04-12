@@ -134,3 +134,4 @@ AUTH_USER_MODEL = 'account.Author'
 # Email setting
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
+

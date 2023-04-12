@@ -29,6 +29,24 @@ class BlogCategory(models.Model):
         return self.category_name
 
 
+class SubCategory(models.Model):
+    category = models.ForeignKey(BlogCategory, on_delete=models.CASCADE)
+    sub_category_name = models.CharField(max_length=255)
+    slug = models.SlugField(max_length=255)
+
+    def save(self, *args, **kwargs):
+        self.slug = slugify(self.sub_category_name)
+        super(SubCategory, self).save(*args, **kwargs)
+
+    def __str__(self):
+        return self.sub_category_name
+
+    class Meta:
+        verbose_name = _('Подкатегория')
+        verbose_name_plural = _('Подкатегории')
+        ordering = ('-sub_category_name', )
+
+
 class Post(models.Model):
     """
     To create a detailed link to each post it is necessary to indicate a slug firstly
@@ -37,7 +55,7 @@ class Post(models.Model):
     It is important in case if there are several articles with one name
     """
 
-    category = models.ForeignKey(BlogCategory, on_delete=models.CASCADE)
+    category = models.ForeignKey(SubCategory, on_delete=models.CASCADE)
     author = models.ForeignKey(Author, on_delete=models.SET(_('Удаленный аккаунт')))
     title = models.CharField(max_length=255)
     title_slug = models.SlugField(max_length=255)
@@ -57,5 +75,4 @@ class Post(models.Model):
         verbose_name = _('Пост')
         verbose_name_plural = _('Посты')
         ordering = ('-created_at', 'author')
-
 
