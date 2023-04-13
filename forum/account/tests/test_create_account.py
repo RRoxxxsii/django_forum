@@ -1,5 +1,5 @@
 import pytest
-
+from django.test import Client
 from account.forms import RegistrationForm
 
 
@@ -27,5 +27,17 @@ def test_create_account(client, user_name, email, password, password2, validity)
 
     assert form.is_valid() is validity
 
+
+c = Client()
+
+
+# @pytest.mark.django_db
+# def test_account_registration():
+#     response_1 = c.post('/account/register/', {'user_name': 'maggy', 'email': 'mish@yanndex.ru',
+#                                                'password': '1234', 'password2': '1234'})
+#     response_2 = c.post('/account/register/', {'user_name': '', 'email': 'mish@yanndex.ru',
+#                                                'password': '1234', 'password2': '1234'})
+#     assert response_1.status_code == 200
+#     assert response_2.status_code != 200
 
 
