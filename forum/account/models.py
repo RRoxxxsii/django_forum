@@ -4,6 +4,7 @@ from django.core.exceptions import ValidationError
 from django.core.mail import send_mail
 from django.core.validators import validate_email
 from django.db import models
+from django.db.models import Model
 from django.utils.translation import gettext_lazy as _
 
 
@@ -43,10 +44,39 @@ class CustomAccountManager(BaseUserManager):
         return user
 
 
+class Country(models.Model):
+    country = models.CharField(max_length=50)
+
+    def __str__(self):
+        return self.country
+
+    class Meta:
+        verbose_name = 'Страна'
+        verbose_name_plural = 'Страны'
+        ordering = ('country',)
+
+
+class Gender(models.Model):
+    gender = models.CharField(help_text=_('Гендер'), blank=True, max_length=40)
+
+    class Meta:
+        verbose_name = 'Пол',
+        verbose_name_plural = 'Пол'
+
+    def __str__(self):
+        return self.gender
+
+
 class Author(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(_('почтовый адрес'), unique=True)
     user_name = models.CharField(max_length=150)
     mobile = models.CharField(max_length=20, blank=True)
+    gender = models.ForeignKey(Gender, on_delete=models.SET_NULL, blank=True, null=True)
+    profile_photo = models.ImageField(upload_to='uploads/% Y/% m/% d/', help_text=_('Фото профиля'), blank=True)
+    profile_information = models.TextField(help_text='Расскажите о себе', blank=True)
+    country = models.ForeignKey(Country, on_delete=models.SET_NULL, blank=True, null=True)
+    telegram_link = models.URLField(_('Телеграмм аккаунт'), blank=True)
+    city = models.CharField(_('Где живете'), max_length=70, blank=True, null=True)
 
     # User Status
     is_active = models.BooleanField(default=False)
@@ -60,8 +90,8 @@ class Author(AbstractBaseUser, PermissionsMixin):
     REQUIRED_FIELDS = ['user_name']
 
     class Meta:
-        verbose_name = "Аккаунт"
-        verbose_name_plural = "Аккаунты"
+        verbose_name = _("Аккаунт")
+        verbose_name_plural = _("Аккаунты")
 
     def __str__(self):
         return self.user_name
@@ -78,3 +108,5 @@ class Author(AbstractBaseUser, PermissionsMixin):
     def save(self, *args, **kwargs):
         self.email = self.email.lower()
         super(Author, self).save(*args, **kwargs)
+
+

@@ -1,4 +1,6 @@
+from django.contrib import messages
 from django.contrib.auth import login
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LoginView
 from django.contrib.sites.shortcuts import get_current_site
 from django.shortcuts import redirect, render
@@ -6,8 +8,9 @@ from django.template.loader import render_to_string
 from django.urls import reverse_lazy
 from django.utils.encoding import force_bytes, force_str
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.views.generic import TemplateView
 
-from account.forms import RegistrationForm
+from account.forms import RegistrationForm, UserEditForm
 from .models import Author
 from .tokens import account_activation_token
 
@@ -63,3 +66,37 @@ def account_activate(request, uidb64, token):
         return redirect("main:home")
     else:
         return render(request, "account/activation_invalid.html")
+
+
+@login_required(redirect_field_name='login')
+def edit_details(request):
+    if request.method == 'POST':
+        user_form = UserEditForm(instance=request.user, data=request.POST)
+        name_to_change = request.POST.get('first_name')
+        current_user_name = Author.objects.get(user_name=request.user.user_name)
+        if user_form.is_valid():
+            if Author.objects.filter(user_name=name_to_change).count() == 0:
+
+                user = Author.objects.get(user_name=current_user_name)
+                user.user_name = name_to_change
+                user.save()
+                messages.success(request, f'Your name has been changed to {name_to_change}')
+
+            else:
+                messages.error(request, f'User with name {name_to_change} already exists, try something else')
+
+    else:
+        user_form = UserEditForm(instance=request.user)
+
+    return render(request, 'account/edit_details.html', {'user_form': user_form})
+
+
+@login_required(redirect_field_name='login')
+def personal_profile_view(request):
+    template_name = 'account/user/personal_profile.html'
+
+    context = {
+        'user': request.user,
+    }
+
+    return render(request, template_name, context=context)
