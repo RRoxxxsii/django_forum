@@ -12,7 +12,7 @@ class AuthorFactory(factory.django.DjangoModelFactory):
         model = Author
 
     user_name = 'Jonny Depp'
-
+    password = '1234'
 
 class BlogCategoryFactory(factory.django.DjangoModelFactory):
 

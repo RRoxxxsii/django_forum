@@ -13,8 +13,8 @@ register(BlogCategoryFactory)
 
 
 @pytest.fixture()
-def new_user1(db, author_factory):
-    user = author_factory.create()
+def new_user1(db):
+    user = Author.objects.create(email='bro@yandex.ru', user_name='somebody', password='1234')
     return user
 
 
