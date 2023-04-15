@@ -3,7 +3,9 @@
 {% block title %}Edit Profile{% endblock %}
 {% block content %}
 
-<link rel="stylesheet" href="{% static "css/personal_profile.css" %}" />
+
+
+<link rel="stylesheet" href="{% static 'main/css/personal_profile.css' %}" />
 
 
 <section class="section about-section gray-bg" id="about">
@@ -50,7 +52,7 @@
                                     {% if user.telegram_link %}
                                     <div class="media">
                                         <label>Telegram</label>
-                                        <p>{{ user.telegram_link }}</p>
+                                        <a href="{{ user.telegram_link }}" class="media-link"><p>{{ user.telegram_link }}</p></a>
                                     </div>
                                     {% endif %}
 

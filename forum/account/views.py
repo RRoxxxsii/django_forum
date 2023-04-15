@@ -69,9 +69,22 @@ def account_activate(request, uidb64, token):
 
 
 @login_required(redirect_field_name='login')
+def personal_profile_view(request):
+    template_name = 'account/user/personal_profile.html'
+
+    context = {
+        'user': request.user,
+    }
+
+    return render(request, template_name, context=context)
+
+
+
+@login_required(redirect_field_name='login')
 def edit_details(request):
     if request.method == 'POST':
         user_form = UserEditForm(instance=request.user, data=request.POST)
+        gender_select_data = user_form.get_tuples_from_genders()
         name_to_change = request.POST.get('first_name')
         current_user_name = Author.objects.get(user_name=request.user.user_name)
         if user_form.is_valid():
@@ -87,16 +100,14 @@ def edit_details(request):
 
     else:
         user_form = UserEditForm(instance=request.user)
+        gender_select_data = user_form.get_tuples_from_genders()
 
-    return render(request, 'account/edit_details.html', {'user_form': user_form})
+
+    return render(request, 'account/user/edit_profile.html', {'user_form': user_form, 'gender_select_data': gender_select_data})
 
 
-@login_required(redirect_field_name='login')
-def personal_profile_view(request):
-    template_name = 'account/user/personal_profile.html'
 
-    context = {
-        'user': request.user,
-    }
+def edit_name(request):
+    pass
 
-    return render(request, template_name, context=context)
+

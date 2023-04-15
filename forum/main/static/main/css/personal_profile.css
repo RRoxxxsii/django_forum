@@ -121,3 +121,21 @@ mark {
 .dark-color {
     color: #20247b;
 }
+
+
+/*links*/
+
+
+.about-list .media .media-link:link {
+  color: darkblue;
+}
+
+.about-list .media .media-link:visited {
+  color: blueviolet;
+}
+
+.about-list .media .media-link:hover {
+  border-bottom: 1px solid;
+  background: mediumslateblue;
+}
+

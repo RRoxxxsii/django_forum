@@ -1,8 +1,7 @@
 from django.contrib.auth.forms import AuthenticationForm
 from django import forms
-from account.models import Author
+from account.models import Author, Gender
 from django.utils.translation import gettext_lazy as _
-
 
 class UserLoginForm(AuthenticationForm):
     """
@@ -66,21 +65,43 @@ class RegistrationForm(forms.ModelForm):
 
 class UserEditForm(forms.ModelForm):
 
+    @staticmethod
+    def get_tuples_from_genders():
+        genders = Gender.objects.all()
+        return (gender for gender in genders)
+
     email = forms.EmailField(
         label='Account email (can not be changed)', max_length=200, widget=forms.TextInput(
             attrs={'class': 'form-control mb-3', 'placeholder': 'email', 'id': 'form-email', 'readonly': 'readonly'}))
 
-    first_name = forms.CharField(
+    user_name = forms.CharField(
         label='Username', min_length=4, max_length=50, widget=forms.TextInput(
             attrs={'class': 'form-control mb-3', 'placeholder': 'Username', 'id': 'form-lastname'}))
 
+    gender = forms.MultipleChoiceField(label='Gender', required=False)
+
+    profile_information = forms.CharField(widget=forms.Textarea(attrs={'label': 'Profile information',
+                                                                       'class': 'form-control',
+                                                                       'id': 'exampleFormControlTextarea1',
+                                                                       'rows': '3',
+                                                                       'placeholder': 'Tell about yourself'}))
+
+    mobile = forms.CharField(label='Mobile', min_length=4, max_length=50, widget=forms.TextInput(
+            attrs={'class': 'form-control mb-3', 'placeholder': 'Enter your mobile', 'id': 'form-lastname'}), required=False)
+
+    telegram = forms.URLField(label='Telegram', min_length=4, max_length=50, widget=forms.TextInput(
+            attrs={'class': 'form-control mb-3', 'placeholder': 'Enter a link to your telegram if any',
+                   'id': 'form-lastname'}), required=False)
+
+    image = forms.ImageField(required=False)
+
     class Meta:
         model = Author
-        fields = ('email', 'first_name',)
+        fields = ('email', 'user_name',)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['first_name'].required = True
+        self.fields['user_name'].required = True
         self.fields['email'].required = True
 
 
