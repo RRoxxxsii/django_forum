@@ -72,7 +72,8 @@ class Author(AbstractBaseUser, PermissionsMixin):
     user_name = models.CharField(max_length=150)
     mobile = models.CharField(max_length=20, blank=True)
     gender = models.ForeignKey(Gender, on_delete=models.SET_NULL, blank=True, null=True)
-    profile_photo = models.ImageField(upload_to='uploads/% Y/% m/% d/', help_text=_('Фото профиля'), blank=True)
+    profile_photo = models.ImageField(upload_to='photos/%Y/%m/%d/', help_text=_('Фото профиля'), blank=True)
+
     profile_information = models.TextField(help_text='Расскажите о себе', blank=True)
     country = models.ForeignKey(Country, on_delete=models.SET_NULL, blank=True, null=True)
     telegram_link = models.URLField(_('Телеграмм аккаунт'), blank=True)

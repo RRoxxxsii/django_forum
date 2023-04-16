@@ -62,7 +62,7 @@
                     </div>
                     <div class="col-lg-6">
                         <div class="about-avatar">
-                            {% if not user.photo %}
+                            {% if not user.profile_photo %}
                                 {% if user.gender_id == 1 %}
                                 <img src="https://bootdey.com/img/Content/avatar/avatar7.png" title="" alt="">
                                 {% elif user.gender_id == 2 %}
@@ -71,7 +71,7 @@
                                 <img src="https://t.ly/QA_I" title="" alt="">
                                 {% endif %}
                             {% else %}
-                            {{ user.photo }}
+                            <img src="{{ user.profile_photo.url }}" title="{{ user.username }}" alt="Фото {{ user.username }}" style="width: 315px; height: 315px">
                             {% endif %}
                         </div>
                     </div>

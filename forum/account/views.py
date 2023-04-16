@@ -79,35 +79,64 @@ def personal_profile_view(request):
     return render(request, template_name, context=context)
 
 
-
 @login_required(redirect_field_name='login')
 def edit_details(request):
+    """
+    Do not forget about transactions
+    """
     if request.method == 'POST':
-        user_form = UserEditForm(instance=request.user, data=request.POST)
+        user_form = UserEditForm(instance=request.user, data=request.POST, files=request.FILES)
         gender_select_data = user_form.get_tuples_from_genders()
-        name_to_change = request.POST.get('first_name')
-        current_user_name = Author.objects.get(user_name=request.user.user_name)
         if user_form.is_valid():
-            if Author.objects.filter(user_name=name_to_change).count() == 0:
 
+            # data got by post request
+
+            name_to_change = request.POST.get('user_name')
+            gender = request.POST.get('gender')
+            profile_information = request.POST.get('profile_information')
+            mobile = request.POST.get('mobile')
+            telegram = request.POST.get('telegram')
+            image = user_form.cleaned_data['image']
+
+            # Username before change attempt
+            current_user_name = Author.objects.get(id=request.user.id)
+            if Author.objects.filter(user_name=name_to_change).count() == 0 or str(name_to_change) == str(current_user_name):
                 user = Author.objects.get(user_name=current_user_name)
-                user.user_name = name_to_change
+
+                if gender:
+                    user.gender = gender
+
+                if profile_information:
+                    user.profile_information = profile_information
+
+                if name_to_change:
+                    user.user_name = name_to_change
+
+                if mobile:
+                    user.mobile = mobile
+
+                if telegram:
+                    user.telegram_link = telegram
+
+                if image:
+                    user.profile_photo = image
+
                 user.save()
-                messages.success(request, f'Your name has been changed to {name_to_change}')
+                messages.success(request, 'Ваши данные были изменены!')
 
             else:
-                messages.error(request, f'User with name {name_to_change} already exists, try something else')
+                messages.error(request, f'Пользователь с именем {name_to_change} уже существует, попробуйте что-то другое')
+
+        else:
+            print(user_form.errors)
 
     else:
         user_form = UserEditForm(instance=request.user)
         gender_select_data = user_form.get_tuples_from_genders()
 
+    return render(request, 'account/user/edit_profile.html', {'user_form': user_form,
+                                                              'gender_select_data': gender_select_data})
 
-    return render(request, 'account/user/edit_profile.html', {'user_form': user_form, 'gender_select_data': gender_select_data})
 
-
-
-def edit_name(request):
-    pass
 
 

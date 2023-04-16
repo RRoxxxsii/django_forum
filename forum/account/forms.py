@@ -70,38 +70,36 @@ class UserEditForm(forms.ModelForm):
         genders = Gender.objects.all()
         return (gender for gender in genders)
 
-    email = forms.EmailField(
-        label='Account email (can not be changed)', max_length=200, widget=forms.TextInput(
-            attrs={'class': 'form-control mb-3', 'placeholder': 'email', 'id': 'form-email', 'readonly': 'readonly'}))
-
     user_name = forms.CharField(
-        label='Username', min_length=4, max_length=50, widget=forms.TextInput(
-            attrs={'class': 'form-control mb-3', 'placeholder': 'Username', 'id': 'form-lastname'}))
+        label='Имя', min_length=4, max_length=50, widget=forms.TextInput(
+            attrs={'class': 'form-control mb-3', 'placeholder': 'Введите ваше имя', 'id': 'form-lastname'}),
+        required=True)
 
-    gender = forms.MultipleChoiceField(label='Gender', required=False)
+    gender = forms.MultipleChoiceField(choices=get_tuples_from_genders(), label='Пол', required=False)
 
-    profile_information = forms.CharField(widget=forms.Textarea(attrs={'label': 'Profile information',
+    profile_information = forms.CharField(required=False,
+                                          widget=forms.Textarea(attrs={'label': 'Информация о вас',
                                                                        'class': 'form-control',
                                                                        'id': 'exampleFormControlTextarea1',
                                                                        'rows': '3',
-                                                                       'placeholder': 'Tell about yourself'}))
+                                                                       'placeholder': 'Расскажите о себе'}))
 
-    mobile = forms.CharField(label='Mobile', min_length=4, max_length=50, widget=forms.TextInput(
-            attrs={'class': 'form-control mb-3', 'placeholder': 'Enter your mobile', 'id': 'form-lastname'}), required=False)
+    mobile = forms.CharField(label='Мобильный телефон', min_length=4, max_length=50, widget=forms.TextInput(
+            attrs={'class': 'form-control mb-3', 'placeholder': 'Введите ваш номер', 'id': 'form-lastname'}), required=False)
 
-    telegram = forms.URLField(label='Telegram', min_length=4, max_length=50, widget=forms.TextInput(
-            attrs={'class': 'form-control mb-3', 'placeholder': 'Enter a link to your telegram if any',
+    telegram = forms.URLField(error_messages={'invalid': 'Кажись, ссылка не действительна'}, label='Телеграм', min_length=4, max_length=50, widget=forms.TextInput(
+            attrs={'class': 'form-control mb-3', 'placeholder': 'Введите ссылку на ваш телеграм аккаунт',
                    'id': 'form-lastname'}), required=False)
 
     image = forms.ImageField(required=False)
 
     class Meta:
         model = Author
-        fields = ('email', 'user_name',)
+        fields = ('user_name',)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['user_name'].required = True
-        self.fields['email'].required = True
+
 
 
