@@ -1,7 +1,10 @@
+import re
+
 from django.contrib.auth.forms import AuthenticationForm
 from django import forms
 from account.models import Author, Gender
 from django.utils.translation import gettext_lazy as _
+
 
 class UserLoginForm(AuthenticationForm):
     """
@@ -21,9 +24,9 @@ class UserLoginForm(AuthenticationForm):
 
 class RegistrationForm(forms.ModelForm):
 
-    user_name = forms.CharField(label=_('Enter your name'), min_length=4, max_length=50, help_text=_('Required'))
-    email = forms.EmailField(max_length=100, help_text=_('Required'),
-                             error_messages={'required': _('Sorry, you need to write an email.')})
+    user_name = forms.CharField(label=_('Введите имя'), min_length=4, max_length=50, help_text=_('Обязательно'))
+    email = forms.EmailField(max_length=100, help_text=_('Обязательно'),
+                             error_messages={'required': _('Вы должны ввести имя')})
 
     password = forms.CharField(label='Password', widget=forms.PasswordInput)
     password2 = forms.CharField(label='Password', widget=forms.PasswordInput)
@@ -44,22 +47,22 @@ class RegistrationForm(forms.ModelForm):
         fields = ('user_name', 'email',)
 
     def clean_user_name(self):
-        user_name = self.cleaned_data['user_name'].lower()
-        r = Author.objects.filter(user_name=user_name)
+        user_name = self.cleaned_data['user_name']
+        r = Author.objects.filter(user_name__iexact=user_name)
         if r.count():
-            raise forms.ValidationError(_('Username already exists.'))
+            raise forms.ValidationError(_('Имя пользователя уже существует'))
         return user_name
 
     def clean_password2(self):
         cd = self.cleaned_data
         if cd['password'] != cd['password2']:
-            raise forms.ValidationError(_('Passwords do not match.'))
+            raise forms.ValidationError(_('Пароли не совпадают'))
         return cd['password2']
 
     def clean_email(self):
         email = self.cleaned_data['email']
         if Author.objects.filter(email=email).exists():
-            raise forms.ValidationError(_('Please use another email, that is already taken'))
+            raise forms.ValidationError(_('Пожалуйста, используйте другой адрес почты, этот занят'))
         return email
 
 
@@ -87,7 +90,8 @@ class UserEditForm(forms.ModelForm):
     mobile = forms.CharField(label='Мобильный телефон', min_length=4, max_length=50, widget=forms.TextInput(
             attrs={'class': 'form-control mb-3', 'placeholder': 'Введите ваш номер', 'id': 'form-lastname'}), required=False)
 
-    telegram = forms.URLField(error_messages={'invalid': 'Кажись, ссылка не действительна'}, label='Телеграм', min_length=4, max_length=50, widget=forms.TextInput(
+    telegram = forms.URLField(error_messages={'invalid': 'Кажись, ссылка не действительна'}, label='Телеграм',
+                              min_length=4, max_length=50, widget=forms.TextInput(
             attrs={'class': 'form-control mb-3', 'placeholder': 'Введите ссылку на ваш телеграм аккаунт',
                    'id': 'form-lastname'}), required=False)
 
