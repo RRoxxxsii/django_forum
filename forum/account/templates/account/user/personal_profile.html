@@ -7,9 +7,18 @@
 
 <link rel="stylesheet" href="{% static 'main/css/personal_profile.css' %}" />
 
-
 <section class="section about-section gray-bg" id="about">
             <div class="container">
+
+                {% if user.profile_photo %}
+                <form action="{% url 'account:delete_photo' %}" method="post">
+                    {% csrf_token %}
+                  <input type="submit" value="Delete profile photo">
+                      Delete photo
+                  </button>
+                </form>
+                {% endif %}
+
                 <div class="row align-items-center flex-row-reverse">
                     <div class="col-lg-6">
                         <div class="about-text go-to">

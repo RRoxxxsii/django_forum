@@ -3,12 +3,12 @@ from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LoginView
 from django.contrib.sites.shortcuts import get_current_site
+from django.http import HttpResponse
 from django.shortcuts import redirect, render
 from django.template.loader import render_to_string
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
 from django.utils.encoding import force_bytes, force_str
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
-from django.views.generic import TemplateView
 
 from account.forms import RegistrationForm, UserEditForm
 from .models import Author
@@ -90,13 +90,13 @@ def edit_details(request):
         if user_form.is_valid():
 
             # data got by post request
-
             name_to_change = request.POST.get('user_name')
             gender = request.POST.get('gender')
             profile_information = request.POST.get('profile_information')
             mobile = request.POST.get('mobile')
             telegram = request.POST.get('telegram')
             image = user_form.cleaned_data['image']
+
 
             # Username before change attempt
             current_user_name = Author.objects.get(id=request.user.id)
@@ -105,19 +105,14 @@ def edit_details(request):
 
                 if gender:
                     user.gender = gender
-
                 if profile_information:
                     user.profile_information = profile_information
-
                 if name_to_change:
                     user.user_name = name_to_change
-
                 if mobile:
                     user.mobile = mobile
-
                 if telegram:
                     user.telegram_link = telegram
-
                 if image:
                     user.profile_photo = image
 
@@ -136,6 +131,20 @@ def edit_details(request):
 
     return render(request, 'account/user/edit_profile.html', {'user_form': user_form,
                                                               'gender_select_data': gender_select_data})
+
+
+@login_required(redirect_field_name='login')
+def delete_photo(request):
+    if request.method == 'POST':
+
+        user = Author.objects.get(id=request.user.id)
+        user.profile_photo.delete()
+        user.save()
+
+        return redirect(request.META.get('HTTP_REFERER'))
+    else:
+        return redirect(reverse('account:personal_profile'))
+
 
 
 

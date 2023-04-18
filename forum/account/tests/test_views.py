@@ -45,7 +45,6 @@ class UserEditTest(TestCase):
     fixtures = ['mydata.json']
 
     def setUp(self):
-        self.c = Client()
         self.user = Author.objects.get(user_name='RRoxxxsii')
 
     def test_user_redirected_if_not_logged_in(self):
@@ -61,13 +60,14 @@ class UserEditTest(TestCase):
     def test_user_edit_form_with_correct_data(self):
         self.client.login(email='mishabur38@gmail.com', password='1234')
         self.client.post('/account/personal_profile/edit_details/',
-                                        {'user_name': 'RRoxxxsii', 'profile_information': 'Something cool',
+                                        {'user_name': 'fakename', 'profile_information': 'Something cool',
                                          'telegram': 'https://t.me/mishkapiska', 'mobile': '88005553535'})
 
         self.user.refresh_from_db()
         self.assertEqual(self.user.profile_information, 'Something cool')
         self.assertEqual(self.user.telegram_link, 'https://t.me/mishkapiska')
         self.assertEqual(self.user.mobile, '88005553535')
+        self.assertEqual(self.user.user_name, 'fakename')
 
     def test_change_details_that_cannot_be_changed(self):
         """
@@ -97,5 +97,20 @@ class UserEditTest(TestCase):
         self.assertEqual(response_request('homer'), 'Python backend developer')   # Name exists
         self.assertEqual(response_request('RRoxxxsii'), 'Something cool')         # Name owned by current user
         self.assertEqual(response_request('fakename'), 'Something cool')          # Name does not exist, so free to use
+
+
+class UserDeletePhoto(TestCase):
+
+    fixtures = ['mydata.json']
+
+    def setUp(self) -> None:
+        self.user = Author.objects.get(user_name='RRoxxxsii')
+
+    def test_send_delete_request(self):
+        self.client.login(email='mishabur38@gmail.com', password='1234')
+
+        request = self.client.post('/account/personal_profile/delete_photo')
+        self.assertEqual(request.status_code, 301)
+
 
 
