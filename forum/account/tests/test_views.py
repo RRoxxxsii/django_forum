@@ -113,4 +113,19 @@ class UserDeletePhoto(TestCase):
         self.assertEqual(request.status_code, 301)
 
 
+class UserDeleteAccount(TestCase):
 
+    fixtures = ['mydata.json']
+
+    def setUp(self) -> None:
+        self.user = Author.objects.get(user_name='RRoxxxsii')
+
+    def test_make_account_inactive(self):
+        self.client.login(email='mishabur38@gmail.com', password='1234')
+        self.assertEqual(self.user.is_active, True)
+
+        request = self.client.get(reverse('account:delete_user'))
+        self.user.refresh_from_db()
+
+        self.assertEqual(request.status_code, 302)
+        self.assertEqual(self.user.is_active, False)

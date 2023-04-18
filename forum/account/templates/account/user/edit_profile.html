@@ -88,7 +88,7 @@
                         value="Save changes">Сохранить изменения</button>
                     <hr class="mb-3">
                 </form>
-                     <form class="account-form px-4" action="" method="post">
+                     <form class="account-form px-4" action="{% url 'account:delete_user' %}" method="post">
                         {% csrf_token %}
                         <p class=" h3 pt-4 font-weight-bold">Удалить аккаунт</p>
                         <p>Вы уверены, что хотите удалить ваш аккаунт?</p>

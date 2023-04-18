@@ -1,5 +1,5 @@
 from django.contrib import messages
-from django.contrib.auth import login
+from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LoginView
 from django.contrib.sites.shortcuts import get_current_site
@@ -145,6 +145,14 @@ def delete_photo(request):
     else:
         return redirect(reverse('account:personal_profile'))
 
+
+@login_required(redirect_field_name='login')
+def delete_user(request):
+    user = Author.objects.get(user_name=request.user.user_name)
+    user.is_active = False
+    user.save()
+    logout(request)
+    return redirect('account:delete_confirmation')
 
 
 
