@@ -12,6 +12,7 @@ class BlogCategory(models.Model):
 
     category_name = models.CharField(max_length=255, unique=True)
     category_slug = models.SlugField(max_length=255, unique=True)
+    category_photo = models.ImageField(blank=True)
 
     class Meta:
         verbose_name = _('Категория')
@@ -65,8 +66,9 @@ class Post(models.Model):
     is_published = models.BooleanField(default=True)
 
     def save(self, *args, **kwargs):
-        self.slug = slugify(self.title)
-        super(Post, self).save(*args, **kwargs)
+        if not self.title_slug:
+            self.title = slugify(f"{self.title}-{self.pk}-")
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.title
