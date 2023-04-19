@@ -1,7 +1,10 @@
+import re
+
 from django.test import Client, TestCase
 from django.urls import reverse
 
 from account.models import Author
+from django.core import mail
 
 
 class TestAccountView(TestCase):
@@ -129,3 +132,54 @@ class UserDeleteAccount(TestCase):
 
         self.assertEqual(request.status_code, 302)
         self.assertEqual(self.user.is_active, False)
+
+
+class UserRestoreAccount(TestCase):
+
+    fixtures = ['mydata.json']
+
+    def setUp(self) -> None:
+        self.user = Author.objects.get(user_name='RRoxxxsii')
+
+    def test_restore_account_with_correct_data(self):
+        self.client.login(email='mishabur38@gmail.com', password='1234')
+        self.client.get(reverse('account:delete_user'))
+        self.user.refresh_from_db()
+
+        # tests if user not active to request email message later
+        self.assertEqual(self.user.is_active, False)
+
+        # correct data for the current user
+        self.client.post(reverse('account:restore'), {'email': 'mishabur38@gmail.com', 'user_name': 'RRoxxxsii'})
+
+        # check if email message exists, and it's subject is as excpected
+        email_sent = mail.outbox
+        self.assertEqual(len(email_sent), 1)
+        self.assertEqual(email_sent[0].subject, 'Activate your account')
+
+        # test that user is not active yet
+        self.assertEqual(self.user.is_active, False)
+
+        # get link form email and test it
+        link = re.search(r'http://.+', email_sent[0].body).group()
+        response = self.client.get(link)
+        self.assertEqual(response.status_code, 302)
+        self.user.refresh_from_db()
+
+        # test if user active
+        self.assertEqual(self.user.is_active, True)
+
+    def test_restore_account_with_incorrect_data(self):
+        self.client.login(email='mishabur38@gmail.com', password='1234')
+        self.client.get(reverse('account:delete_user'))
+        self.user.refresh_from_db()
+
+        # tests if user not active to request email message later
+        self.assertEqual(self.user.is_active, False)
+
+        # send post request with incorrect data
+        self.client.post(reverse('account:restore'), {'email': 'incorrect@gmail.com', 'user_name': 'incorrect'})
+
+        email_sent = mail.outbox
+        self.assertEqual(len(email_sent), 0)
+

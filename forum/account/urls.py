@@ -17,9 +17,14 @@ urlpatterns = [
     path('personal_profile/', views.personal_profile_view, name='personal_profile'),
     path('personal_profile/edit_details/', views.edit_details, name='edit_details'),
     path('personal_profile/delete_photo/', views.delete_photo, name='delete_photo'),
+
+    # deleting user
     path('personal_profile/delete_user/', views.delete_user, name='delete_user'),
     path('personal_profile/delete_confirm/', TemplateView.as_view(template_name="account/user/delete_confirm.html"),
          name='delete_confirmation'),
+
+    # restoring user account
+    path('restore/', views.enable_user, name='restore')
 
 ]
 

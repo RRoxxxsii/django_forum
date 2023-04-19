@@ -106,4 +106,16 @@ class UserEditForm(forms.ModelForm):
         self.fields['user_name'].required = True
 
 
+class UserRestoreForm(forms.ModelForm):
+    email = forms.CharField(max_length=254, widget=forms.TextInput(
+        attrs={'class': 'form-control mb-3', 'placeholder': 'Введите почту', 'id': 'form-email'}))
+
+    user_name = forms.CharField(
+        label='Имя', min_length=4, max_length=50, widget=forms.TextInput(
+            attrs={'class': 'form-control mb-3', 'placeholder': 'Введите ваше имя', 'id': 'form-lastname'}),
+        required=True)
+
+    class Meta:
+        model = Author
+        fields = ['email', 'user_name']
 
