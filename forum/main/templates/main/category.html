@@ -1,0 +1,29 @@
+{% extends 'main/base.html' %}
+{% load static %}
+{% block title %} {{ title }} {% endblock %}
+{% block content %}
+<link rel="stylesheet" href="{% static 'main/css/subcat_styles.css' %}">
+
+<h2 class="category_headline">{{ category.category_name }}</h2>
+
+{% for subcategory in subcategories %}
+<hr>
+<div class="subforum-section">
+    <div class="subforum-description subforum-column">
+        <h4><a href="{{ subcategory.get_absolute_url }}">{{ subcategory }}</a></h4>
+        <p>Description Content: let's try to be cool, otherwise,w at 'sthe point in libing together with people youdont'
+            live.</p>
+    </div>
+    <div class="subforum-stats subforum-column center">
+        <span>24 Posts | 12 Topics</span>
+    </div>
+    <div class="subforum-info subforum-column">
+        <b><a href="">Last post</a></b> by <a href="">JustAUser</a>
+        <br>on <small>12 Dec 2020</small>
+    </div>
+</div>
+<hr>
+{% endfor %}
+
+{% endblock %}
+

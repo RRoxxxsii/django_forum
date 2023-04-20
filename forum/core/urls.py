@@ -24,7 +24,7 @@ from main.views import pageNotFound
 
 urlpatterns = [
     path('admin/', admin.site.urls, name='admin'),
-    path('', include('main.urls')),
+    path('', include('main.urls', namespace='main')),
     path('account/', include('account.urls', namespace='account'))
 ]
 

@@ -4,8 +4,8 @@ from main.models import BlogCategory, SubCategory, Post
 
 @admin.register(BlogCategory)
 class BlogCategoryAdmin(admin.ModelAdmin):
-    prepopulated_fields = {'category_slug': ('category_name',)}
-    list_display = ('category_name', 'category_slug')
+    prepopulated_fields = {'slug': ('category_name',)}
+    list_display = ('category_name', 'slug')
     ordering = ('category_name', 'id')
 
 
@@ -18,7 +18,6 @@ class SubCategoryAdmin(admin.ModelAdmin):
 
 @admin.register(Post)
 class PostAdmin(admin.ModelAdmin):
-    prepopulated_fields = {'title_slug': ('title',)}
     list_filter = ('category', )
     search_fields = ('author', )
 

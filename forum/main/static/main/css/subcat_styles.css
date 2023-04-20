@@ -1,0 +1,14 @@
+
+.category_headline{
+    align-items: center;
+    display: flex;
+    justify-content: center;
+    margin-top: 5%;
+    margin-bottom: 5%;
+}
+
+
+.subforum-section{
+    margin: auto;
+    width: 50%;
+}
