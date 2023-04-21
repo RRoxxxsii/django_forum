@@ -8,7 +8,7 @@ from django.core import mail
 
 
 class TestAccountView(TestCase):
-    fixtures = ['data.json']
+    fixtures = ['db.json']
 
     def setUp(self) -> None:
         self.c = Client()

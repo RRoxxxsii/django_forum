@@ -7,7 +7,7 @@ from account.models import Author
 class TestUserSignUp(TestCase):
 
     fixtures = [
-        'data.json'
+        'db.json'
         ]
 
     def test_create_new_user(self):
