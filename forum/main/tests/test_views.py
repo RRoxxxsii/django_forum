@@ -50,3 +50,44 @@ class MainViews(TestCase):
         for post in self.posts:
             self.assertContains(response, post.author)
             self.assertContains(response, post)
+
+
+class ViewFormAddComment(TestCase):
+
+    fixtures = ['db.json']
+
+    def setUp(self) -> None:
+        self.posts = Post.objects.filter(category=2)         # posts for one specific category
+        self.subcategory = SubCategory.objects.get(id=2)
+
+    def test_posts(self):
+        post_amount = len(self.posts)
+        self.assertEqual(post_amount, 2)
+
+    def test_post_page_when_user_is_not_authenticated(self):
+        """
+        When user is not logged in he sees the
+        link 'Войдите в систему прежде чем оставлять комментарии'.
+        """
+        response = self.client.get(reverse('main:subcategory_post', kwargs={'subcategory_slug': self.subcategory.slug}))
+        self.assertContains(response, 'Войдите в систему прежде чем оставлять комментарии')
+
+    def test_post_page_when_user_is_authenticated(self):
+        """
+        When user is logged in he sees the
+        button 'Оставить комментарий'.
+        """
+        self.client.login(email='mishabur38@gmail.com', password='1234')
+        response = self.client.get(reverse('main:subcategory_post', kwargs={'subcategory_slug': self.subcategory.slug}))
+        self.assertContains(response, 'Оставить комментарий')
+
+    def test_add_post(self):
+        self.client.login(email='mishabur38@gmail.com', password='1234')
+
+        response = self.client.post(reverse('main:subcategory_post',
+                                            kwargs={'subcategory_slug': self.subcategory.slug}),
+                                    {'title': 'Не знаю как',
+                                     'text': 'Подскажите, как писать оптимальный код на Python?'})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(self.posts), 3)
+
