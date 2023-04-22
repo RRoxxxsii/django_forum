@@ -58,7 +58,7 @@ class Post(models.Model):
     is_published = models.BooleanField(default=True)
 
     def get_absolute_url(self):
-        return reverse('discussion_page', kwargs={'category_id': self.pk})
+        return reverse('main:edit_post', kwargs={'pk': self.pk})
 
     def __str__(self):
         return self.title

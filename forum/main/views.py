@@ -1,11 +1,15 @@
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Max
-from django.http import HttpResponseNotFound
+from django.http import HttpResponseNotFound, Http404, request, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
-from django.views.generic import TemplateView, DetailView
+from django.urls import reverse, reverse_lazy
+from django.views.generic import TemplateView, DetailView, UpdateView, DeleteView
 
 from account.models import Author
 from main.forms import AddCommentForm
 from main.models import BlogCategory, SubCategory, Post
+
 
 
 def pageNotFound(request, exception):
@@ -46,7 +50,7 @@ def subcategory_post(request, subcategory_slug):
             text = request.POST.get('text')
             title = request.POST.get('title')
             subcategory_id = SubCategory.objects.get(slug=subcategory_slug).id
-            context = {'posts': posts, 'title': subcategory, 'form': form, 'user_name': user_name}
+            context = {'posts': posts, 'title': subcategory, 'form': form, 'user_name': user.user_name}
             Post.objects.create(author=user, text=text, title=title, category_id=subcategory_id)
 
     else:
@@ -60,6 +64,60 @@ def subcategory_post(request, subcategory_slug):
     return render(request, 'main/posts.html', context=context)
 
 
+class PostDeleteView(DeleteView):
+    model = Post
+    template_name = 'main/post_delete.html'
+    success_url = '/'
+
+    def get(self, request, *args, **kwargs):
+        user_id_from_request = request.user.id
+        post_id = kwargs.get('pk')
+
+        try:
+            post = Post.objects.get(pk=post_id)
+        except ObjectDoesNotExist:
+            raise Http404
+
+        title, text = post.title, post.text
+        self.initial['title'] = title
+        self.initial['text'] = text
+        form = self.form_class(initial=self.initial)
+
+        if user_id_from_request != post.author_id:                 # Prevents URL injection
+            raise Http404
+
+        return render(request, self.template_name)
 
 
+
+class PostUpdateView(UpdateView, LoginRequiredMixin):
+    model = Post
+    redirect_field_name = 'login'
+    form_class = AddCommentForm
+    template_name = 'main/edit_post.html'
+    initial = {'title': '', 'text': ''}
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["button_label"] = 'Обновить комментарий'
+        return context
+
+    def get(self, request, *args, **kwargs):
+        user_id_from_request = request.user.id
+        post_id = kwargs.get('pk')
+
+        try:
+            post = Post.objects.get(pk=post_id)
+        except ObjectDoesNotExist:
+            raise Http404
+
+        title, text = post.title, post.text
+        self.initial['title'] = title
+        self.initial['text'] = text
+        form = self.form_class(initial=self.initial)
+
+        if user_id_from_request != post.author_id:                 # Prevents URL injection
+            raise Http404
+
+        return render(request, self.template_name, {"form": form})
 

@@ -2,7 +2,7 @@ from main.models import Post
 from django import forms
 
 
-class AddCommentForm(forms.Form):
+class AddCommentForm(forms.ModelForm):
 
     title = forms.CharField(widget=forms.TextInput(
         attrs={'class': 'form-control mb-3',

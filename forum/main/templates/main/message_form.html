@@ -16,16 +16,13 @@
 
 <form class="account-form px-4 pt-4" method="post" enctype="multipart/form-data">
 
-    {% if user_form.is_valid and profile_form.is_valid %}
+    {% if form.is_valid %}
     <div class="alert alert-primary" role="alert">
         Комментарий оставлен!
     </div>
-    <p class="small text-center pt-0">
-        <a href="">Back to Dashboard</a>
-    </p>
     {% endif %}
 
-    {% if user_form.errors %}
+    {% if form.errors %}
     {% for field in user_form %}
     {% for error in field.errors %}
     <div class="alert alert-primary" role="alert">
@@ -52,11 +49,15 @@
     {{ form.text }}
 
 
-    <label class="small font-weight-bold"></label>
-    {{ user_form.profile_information }}
 
     <button class="btn btn-primary btn-block py-2 mb-4 mt-5 fw-bold w-100" type="submit"
-                        value="Save changes">Оставить комментарий
+                        value="Save changes">{% block button %}
+        {% if button_label %}
+        {{ button_label }}
+        {% else %}
+        Оставить комментарий
+        {% endif %}
+        {% endblock %}
     </button>
 
 </form>

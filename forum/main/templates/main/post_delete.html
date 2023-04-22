@@ -1,0 +1,22 @@
+{% extends 'main/base.html' %}
+{% block title %} {{ title }} {% endblock %}
+{% block content %}
+
+<style>
+    .form {
+    max-width: 50%;
+    margin-left: 25%;
+}
+</style>
+
+
+<div class="form">
+    <form method="post">
+        {% csrf_token %}
+    <button class="btn btn-primary btn-block py-2 mb-4 mt-5 fw-bold w-100" type="submit"
+                        value="Save changes">Удалить запись
+    </button>
+    </form>
+</div>
+
+{% endblock %}

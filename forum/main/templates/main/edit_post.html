@@ -1,0 +1,16 @@
+{% extends 'main/base.html' %}
+{% block title %} {{ title }} {% endblock %}
+{% block content %}
+
+<style>
+    .form {
+    max-width: 50%;
+    margin-left: 25%;
+}
+</style>
+
+
+<div class="form">{% include 'main/message_form.html' %}</div>
+
+
+{% endblock %}
