@@ -9,7 +9,7 @@ from django.views.generic import TemplateView, DetailView, UpdateView, DeleteVie
 from account.models import Author
 from main.forms import AddCommentForm
 from main.models import BlogCategory, SubCategory, Post
-
+from main.utils import DeleteEditMixin
 
 
 def pageNotFound(request, exception):
@@ -64,33 +64,7 @@ def subcategory_post(request, subcategory_slug):
     return render(request, 'main/posts.html', context=context)
 
 
-class PostDeleteView(DeleteView):
-    model = Post
-    template_name = 'main/post_delete.html'
-    success_url = '/'
-
-    def get(self, request, *args, **kwargs):
-        user_id_from_request = request.user.id
-        post_id = kwargs.get('pk')
-
-        try:
-            post = Post.objects.get(pk=post_id)
-        except ObjectDoesNotExist:
-            raise Http404
-
-        title, text = post.title, post.text
-        self.initial['title'] = title
-        self.initial['text'] = text
-        form = self.form_class(initial=self.initial)
-
-        if user_id_from_request != post.author_id:                 # Prevents URL injection
-            raise Http404
-
-        return render(request, self.template_name)
-
-
-
-class PostUpdateView(UpdateView, LoginRequiredMixin):
+class PostUpdateView(UpdateView, LoginRequiredMixin, DeleteEditMixin):
     model = Post
     redirect_field_name = 'login'
     form_class = AddCommentForm
@@ -103,21 +77,16 @@ class PostUpdateView(UpdateView, LoginRequiredMixin):
         return context
 
     def get(self, request, *args, **kwargs):
-        user_id_from_request = request.user.id
-        post_id = kwargs.get('pk')
-
-        try:
-            post = Post.objects.get(pk=post_id)
-        except ObjectDoesNotExist:
-            raise Http404
-
-        title, text = post.title, post.text
-        self.initial['title'] = title
-        self.initial['text'] = text
-        form = self.form_class(initial=self.initial)
-
-        if user_id_from_request != post.author_id:                 # Prevents URL injection
-            raise Http404
-
+        form = super().get(request, *args, **kwargs)
         return render(request, self.template_name, {"form": form})
+
+
+class PostDeleteView(DeleteView, DeleteEditMixin):
+    model = Post
+    template_name = 'main/post_delete.html'
+    success_url = '/'
+
+    def get(self, request, *args, **kwargs):
+        return render(request, self.template_name)
+
 
