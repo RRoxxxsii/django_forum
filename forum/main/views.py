@@ -1,15 +1,12 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import ObjectDoesNotExist
-from django.db.models import Max
-from django.http import HttpResponseNotFound, Http404, request, HttpResponseRedirect
-from django.shortcuts import render, get_object_or_404
-from django.urls import reverse, reverse_lazy
-from django.views.generic import TemplateView, DetailView, UpdateView, DeleteView
-
+from django.http import Http404, HttpResponseRedirect
+from django.shortcuts import render, get_object_or_404, redirect
+from django.views.generic import TemplateView, UpdateView, DeleteView
+from django.contrib import messages
 from account.models import Author
 from main.forms import AddCommentForm
 from main.models import BlogCategory, SubCategory, Post
-from main.utils import DeleteEditMixin
 
 
 def pageNotFound(request, exception):
@@ -64,12 +61,12 @@ def subcategory_post(request, subcategory_slug):
     return render(request, 'main/posts.html', context=context)
 
 
-class PostUpdateView(LoginRequiredMixin, UpdateView, DeleteEditMixin):
+class PostUpdateView(LoginRequiredMixin, UpdateView):
     model = Post
     redirect_field_name = 'login'
     form_class = AddCommentForm
     template_name = 'main/edit_post.html'
-    initial = {'title': '', 'text': ''}
+    success_url = '/'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -77,16 +74,38 @@ class PostUpdateView(LoginRequiredMixin, UpdateView, DeleteEditMixin):
         return context
 
     def post(self, request, *args, **kwargs):
-        form = super().get(request, *args, **kwargs)
-        return render(request, self.template_name, {"form": form})
+        user_id_from_request = request.user.id
+        post_id = kwargs.get('pk')
+        title, text = request.POST.get('title'), request.POST.get('text')
+
+        post = get_object_or_404(Post, pk=post_id)
+
+        if user_id_from_request != post.author_id:  # Prevents URL injection
+            raise Http404
+        else:
+            post.title, post.text = title, text
+            post.save()
+            messages.success(request, message='Пост успешно отредактирован')
+            return render(request, self.template_name, context={'form': self.form_class(initial=
+                                                                                        {'title': title, 'text': text}),
+                                                                'button_label': 'Обновить запись'})
 
 
-class PostDeleteView(LoginRequiredMixin, DeleteView, DeleteEditMixin):
+class PostDeleteView(LoginRequiredMixin, DeleteView):
     model = Post
     template_name = 'main/post_delete.html'
-    success_url = '/'
+    #success_url = '/'
 
-    def get(self, request, *args, **kwargs):
-        return render(request, self.template_name)
+    def post(self, request, *args, **kwargs):
+        user_id_from_request = request.user.id
+        post_id = kwargs.get('pk')
+
+        post = get_object_or_404(Post, pk=post_id)
+
+        if user_id_from_request != post.author_id:  # Prevents URL injection
+            raise Http404
+        else:
+            post.delete()
+            return HttpResponseRedirect('/')
 
 
