@@ -64,7 +64,7 @@ def subcategory_post(request, subcategory_slug):
     return render(request, 'main/posts.html', context=context)
 
 
-class PostUpdateView(UpdateView, LoginRequiredMixin, DeleteEditMixin):
+class PostUpdateView(LoginRequiredMixin, UpdateView, DeleteEditMixin):
     model = Post
     redirect_field_name = 'login'
     form_class = AddCommentForm
@@ -76,12 +76,12 @@ class PostUpdateView(UpdateView, LoginRequiredMixin, DeleteEditMixin):
         context["button_label"] = 'Обновить комментарий'
         return context
 
-    def get(self, request, *args, **kwargs):
+    def post(self, request, *args, **kwargs):
         form = super().get(request, *args, **kwargs)
         return render(request, self.template_name, {"form": form})
 
 
-class PostDeleteView(DeleteView, DeleteEditMixin):
+class PostDeleteView(LoginRequiredMixin, DeleteView, DeleteEditMixin):
     model = Post
     template_name = 'main/post_delete.html'
     success_url = '/'
