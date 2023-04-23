@@ -72,16 +72,72 @@ ul.list-articles li {
             {% endautoescape %}
             <div class="clear"></div>
             {{ p.text }}
-          <p class="link-read-post"><a href="">Ответить на пост</a></p>
+          <p class="link-read-post"><a href="#formReview" onclick="addReview('{{ p.author }}')">Ответить на пост</a></p>
         </li>
         {% endfor %}
     </ul>
 </div>
 
 {% if user.is_authenticated %}
-<div class="form">{% include 'main/message_form.html' %}</div>
+<div class="form">
+    <form class="account-form px-4 pt-4" method="post" enctype="multipart/form-data">
+
+    {% if form.is_valid %}
+    <div class="alert alert-primary" role="alert">
+        Комментарий оставлен!
+    </div>
+    {% endif %}
+
+    {% if form.errors %}
+    {% for field in user_form %}
+    {% for error in field.errors %}
+    <div class="alert alert-primary" role="alert">
+        {{ error }}
+    </div>
+    {% endfor %}
+    {% endfor %}
+    {% endif %}
+
+    {% if messages %}
+    <div class="alert alert-warning" alert="{{ messages.tags }}" role="alert">
+        {% for message in messages %}
+        {{ message|safe }}
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    {% csrf_token %}
+
+    <label class="small font-weight-bold">{{ form.title.label}}</label>
+    {{ form.title }}
+
+    <label class="small font-weight-bold">{{ form.text.label }}</label>
+    {{ form.text }}
+
+
+
+    <button class="btn btn-primary btn-block py-2 mb-4 mt-5 fw-bold w-100" type="submit"
+                        value="Save changes">{% block button %}
+        {% if button_label %}
+        {{ button_label }}
+        {% else %}
+        Оставить комментарий
+        {% endif %}
+        {% endblock %}
+    </button>
+
+</form>
+</div>
 {% else %}
 <div style="margin-left: 30%; margin-top: 2%"><a href="{% url 'account:login' %}" style="color: black"><h4>Войдите в систему прежде чем оставлять комментарии</h4></a></div>
 {% endif %}
+
+
+<script>
+    function addReview(author, id) {
+        document.getElementById('exampleFormControlTextarea1').innerText = `${author}, `;
+        document.getElementById('exampleFormControlTextarea1').scrollIntoView();
+    }
+</script>
 
 {% endblock %}
