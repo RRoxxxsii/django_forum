@@ -183,3 +183,62 @@ class UserRestoreAccount(TestCase):
         email_sent = mail.outbox
         self.assertEqual(len(email_sent), 0)
 
+
+class UserPasswordReset(TestCase):
+
+    fixtures = ['mydata.json']
+
+    def test_user_password_reset_page_submitting_not_existing_email(self):
+        request = self.client.post(reverse('account:pwdreset'), data={'email': 'fake@gmail.com'})
+        self.assertEqual(len(mail.outbox), 0)
+        self.assertContains(request, 'Ошибка: попробуйте снова!')
+
+    def test_user_password_reset_page_submitting_existing_email(self):
+        request = self.client.post(reverse('account:pwdreset'), data={'email': 'mishabur38@gmail.com'})
+        self.assertEqual(request.status_code, 302)
+        self.assertEqual(len(mail.outbox), 1)
+
+    def test_user_reset_confirm_page_where_password1_is_equal_password2_and_data_correct(self):
+        request = self.client.post(reverse('account:pwdreset'), data={'email': 'mishabur38@gmail.com'})
+        # test email sent and follow the link
+
+        email_sent = mail.outbox
+        self.assertEqual(len(email_sent), 1)
+        link = re.search(r'http://.+', email_sent[0].body).group()
+        request = self.client.get(link)
+        self.assertEqual(request.status_code, 302)
+        self.assertRegex(request.url, r'/account/password_reset_confirm/\w{2}/set-password')
+
+        # test change the data
+        request_to_change_data = self.client.post(request.url, data={'new_password1': 'pro191Ji321M', 'new_password2': 'pro191Ji321M'})
+        self.assertEqual(request_to_change_data.status_code, 302)
+        self.assertEqual(request_to_change_data.url, '/account/password_reset_complete/')
+
+        # test login in with new password data
+        logged_in = self.client.login(email='mishabur38@gmail.com', password='pro191Ji321M')
+        self.assertEqual(logged_in, True)
+
+    def test_user_reset_confirm_page_where_password1_is_not_equal_password2(self):
+        # test input data(email) to get the link sent
+        request = self.client.post(reverse('account:pwdreset'), data={'email': 'mishabur38@gmail.com'})
+
+        # test email sent and follow the link
+        email_sent = mail.outbox
+        self.assertEqual(len(email_sent), 1)
+        link = re.search(r'http://.+', email_sent[0].body).group()
+        request = self.client.get(link)
+        self.assertEqual(request.status_code, 302)
+        self.assertRegex(request.url, r'/account/password_reset_confirm/\w{2}/set-password')
+
+        # test change the data
+        request_to_change_data = self.client.post(request.url, data={'new_password1': 'passwrod', 'new_password2': 'pro191Ji321M'})
+        self.assertEqual(request_to_change_data.status_code, 200)
+        self.assertContains(request_to_change_data, 'Ошибка: попробуйте снова!')
+
+    def test_user_reset_confirm_page_where_email_does_not_exist_at_the_db(self):
+        # test input data(email) to get the link sent
+        request = self.client.post(reverse('account:pwdreset'), data={'email': 'fakeemail@gmail.com'})
+        self.assertEqual(request.status_code, 200)
+        self.assertContains(request, 'Ошибка: попробуйте снова!')
+
+

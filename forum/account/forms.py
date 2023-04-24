@@ -1,6 +1,6 @@
 import re
 
-from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth.forms import AuthenticationForm, PasswordResetForm, SetPasswordForm
 from django import forms
 from account.models import Author, Gender
 from django.utils.translation import gettext_lazy as _
@@ -118,4 +118,26 @@ class UserRestoreForm(forms.ModelForm):
     class Meta:
         model = Author
         fields = ['email', 'user_name']
+
+
+class PwdResetForm(PasswordResetForm):
+    email = forms.EmailField(max_length=254, widget=forms.TextInput(
+        attrs={'class': 'form-control mb-3', 'placeholder': 'Почта', 'id': 'form-email'}))
+
+    def clean_email(self):
+        email = self.cleaned_data['email']
+        u = Author.objects.filter(email=email)
+        if not u:
+            raise forms.ValidationError(
+                'Похоже, такого email адреса не существует')
+        return email
+
+
+class PwdResetConfirmForm(SetPasswordForm):
+    new_password1 = forms.CharField(
+        label='Новый пароль', widget=forms.PasswordInput(
+            attrs={'class': 'form-control mb-3', 'placeholder': 'Новый пароль', 'id': 'form-newpass'}))
+    new_password2 = forms.CharField(
+        label='Введите новый пароль', widget=forms.PasswordInput(
+            attrs={'class': 'form-control mb-3', 'placeholder': 'Новый пароль', 'id': 'form-new-pass2'}))
 
