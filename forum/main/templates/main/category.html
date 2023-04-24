@@ -11,14 +11,16 @@
 <div class="subforum-section">
     <div class="subforum-description subforum-column">
         <h4><a href="{{ subcategory.get_absolute_url }}">{{ subcategory }}</a></h4>
+        {% if subcategory.post_text %}
         <p>{{ subcategory.post_text }}</p>
+        {% endif %}
     </div>
     <div class="subforum-stats subforum-column center">
         <span>Количество постов: {{ subcategory.num_posts }}</span>
     </div>
     <div class="subforum-info subforum-column">
         {% if subcategory.last_post %}
-        <b><a href="">Last post</a></b> by <a href="">{{ subcategory.post_author }}</a>
+        Автор последнего поста: <a href="">{{ subcategory.post_author }}</a>
         <br>
         <small>Последний пост: {{ subcategory.last_post }}</small>
 
