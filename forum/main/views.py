@@ -1,5 +1,6 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import ObjectDoesNotExist
+from django.db.models import Max, Count, Subquery, OuterRef
 from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views.generic import TemplateView, UpdateView, DeleteView
@@ -28,8 +29,17 @@ class HomePageView(TemplateView):
 
 
 def category_detail(request, slug):
-    category = get_object_or_404(BlogCategory, slug=slug)               # Category
-    subcategories = SubCategory.objects.filter(category=category.id)
+    category = get_object_or_404(BlogCategory, slug=slug)  # Category
+    last_post = Post.objects.filter(category=OuterRef('pk')).order_by('-created_at')
+    subcategories = SubCategory.objects.filter(category=category.id).annotate(last_post=Max('post__created_at'),
+                                                                              num_posts=Count(
+                                                                                  'post__author__user_name'),
+                                                                              post_text=Subquery(
+                                                                                  last_post.values('title')[:1]),
+                                                                              post_author=Subquery(
+                                                                                  last_post.values('author__user_name')[
+                                                                                  :1])
+                                                                              ).select_related('category')
 
     context = {'category': category, 'subcategories': subcategories, 'title': category}
     return render(request, 'main/category.html', context=context)
@@ -42,7 +52,6 @@ def subcategory_post(request, subcategory_slug):
     if request.method == 'POST':
         form = AddCommentForm(request.POST)
         if form.is_valid():
-            print(request)
             user = request.user
             text = request.POST.get('text')
             title = request.POST.get('title')
@@ -94,12 +103,10 @@ class PostUpdateView(LoginRequiredMixin, UpdateView):
 class PostDeleteView(LoginRequiredMixin, DeleteView):
     model = Post
     template_name = 'main/post_delete.html'
-    #success_url = '/'
 
     def post(self, request, *args, **kwargs):
         user_id_from_request = request.user.id
         post_id = kwargs.get('pk')
-
         post = get_object_or_404(Post, pk=post_id)
 
         if user_id_from_request != post.author_id:  # Prevents URL injection

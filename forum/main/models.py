@@ -48,7 +48,6 @@ class SubCategory(models.Model):
 
 
 class Post(models.Model):
-
     category = models.ForeignKey(SubCategory, on_delete=models.CASCADE)
     author = models.ForeignKey(Author, on_delete=models.SET(_('Удаленный аккаунт')))
     title = models.CharField(max_length=255)

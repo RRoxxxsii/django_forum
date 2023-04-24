@@ -11,15 +11,18 @@
 <div class="subforum-section">
     <div class="subforum-description subforum-column">
         <h4><a href="{{ subcategory.get_absolute_url }}">{{ subcategory }}</a></h4>
-        <p>Description Content: let's try to be cool, otherwise,w at 'sthe point in libing together with people youdont'
-            live.</p>
+        <p>{{ subcategory.post_text }}</p>
     </div>
     <div class="subforum-stats subforum-column center">
-        <span>24 Posts | 12 Topics</span>
+        <span>Количество постов: {{ subcategory.num_posts }}</span>
     </div>
     <div class="subforum-info subforum-column">
-        <b><a href="">Last post</a></b> by <a href="">JustAUser</a>
-        <br>on <small>12 Dec 2020</small>
+        {% if subcategory.last_post %}
+        <b><a href="">Last post</a></b> by <a href="">{{ subcategory.post_author }}</a>
+        <br>
+        <small>Последний пост: {{ subcategory.last_post }}</small>
+
+        {% endif %}
     </div>
 </div>
 <hr>
