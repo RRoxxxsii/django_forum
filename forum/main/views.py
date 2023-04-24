@@ -1,5 +1,6 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import ObjectDoesNotExist
+from django.core.paginator import Paginator
 from django.db.models import Max, Count, Subquery, OuterRef
 from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404, redirect
@@ -49,6 +50,11 @@ def subcategory_post(request, subcategory_slug):
     subcategory = get_object_or_404(SubCategory, slug=subcategory_slug)
     posts = Post.objects.filter(category=subcategory.id)
 
+    # Paginator
+    paginator = Paginator(posts, 8)
+    page_number = request.GET.get('page')
+    posts = paginator.get_page(page_number)
+
     if request.method == 'POST':
         form = AddCommentForm(request.POST)
         if form.is_valid():
@@ -57,6 +63,8 @@ def subcategory_post(request, subcategory_slug):
             title = request.POST.get('title')
             subcategory_id = SubCategory.objects.get(slug=subcategory_slug).id
             context = {'posts': posts, 'title': subcategory, 'form': form, 'user_name': user.user_name}
+
+
             Post.objects.create(author=user, text=text, title=title, category_id=subcategory_id)
 
     else:
