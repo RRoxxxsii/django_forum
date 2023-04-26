@@ -19,3 +19,14 @@ class AuthorListView(TestCase):
         users_amount_listed = response.content.decode().count('<td class="list_item">') / 4    # Num of columns = 4
         self.assertEqual(users_amount_listed, self.users_amount)
 
+
+class AuthorDetailView(TestCase):
+    fixtures = ['db.json']
+
+    def setUp(self) -> None:
+        self.authors = Author.objects.all()
+
+    def test_detail_view_response(self):
+        for author in self.authors:
+            response = self.client.get(reverse('authors:author_detail_view', kwargs={'pk': author.pk}))
+            self.assertEqual(response.status_code, 200)

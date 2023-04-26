@@ -4,6 +4,7 @@ from django.core.exceptions import ValidationError
 from django.core.mail import send_mail
 from django.core.validators import validate_email
 from django.db import models
+from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
 
@@ -109,5 +110,8 @@ class Author(AbstractBaseUser, PermissionsMixin):
     def save(self, *args, **kwargs):
         self.email = self.email.lower()
         super(Author, self).save(*args, **kwargs)
+
+    def get_absolute_url(self):
+        return reverse('authors:author_detail_view', kwargs={'pk': self.pk})
 
 

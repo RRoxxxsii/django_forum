@@ -20,18 +20,18 @@
 
 			{% for author in authors %}
 			<tr>
-				<td class="list_item">{{ author.user_name }}</td>
+				<td class="list_item"><a href="{{ author.get_absolute_url }}">{{ author.user_name }}</a></td>
 				<td class="list_item">{{ author.created }}</td>
 
                 {% if not user.profile_photo %}
-                    <td class="list_item">><img src="https://thumbs.dreamstime.com/b/%D0%B7%D0%BD%D0%B0%D1%87%D0%BE%D0%BA-%D0%BF%D0%BE-%D1%83%D0%BC%D0%BE%D0%BB%D1%87%D0%B0%D0%BD%D0%B8%D1%8E-%D0%BF%D0%BB%D0%BE%D1%81%D0%BA%D0%B8%D0%B9-%D0%B0%D0%B2%D0%B0%D1%82%D0%B0%D1%80-%D0%BF%D1%80%D0%BE%D1%84%D0%B8%D0%BB%D1%8F-%D1%81%D0%BE%D1%86%D0%B8%D0%B0%D0%BB%D1%8C%D0%BD%D1%8B%D0%B9-%D0%B2%D0%B5%D0%BA%D1%82%D0%BE%D1%80-184330869.jpg" title="" alt=""></td>
+                    <td class="list_item"><img src="https://thumbs.dreamstime.com/b/%D0%B7%D0%BD%D0%B0%D1%87%D0%BE%D0%BA-%D0%BF%D0%BE-%D1%83%D0%BC%D0%BE%D0%BB%D1%87%D0%B0%D0%BD%D0%B8%D1%8E-%D0%BF%D0%BB%D0%BE%D1%81%D0%BA%D0%B8%D0%B9-%D0%B0%D0%B2%D0%B0%D1%82%D0%B0%D1%80-%D0%BF%D1%80%D0%BE%D1%84%D0%B8%D0%BB%D1%8F-%D1%81%D0%BE%D1%86%D0%B8%D0%B0%D0%BB%D1%8C%D0%BD%D1%8B%D0%B9-%D0%B2%D0%B5%D0%BA%D1%82%D0%BE%D1%80-184330869.jpg" title="" alt=""></td>
                 {% else %}
-                    <td class="list_item">><img src="{{ author.profile_photo.url }}" alt="Фото профиля"></td>
+                    <td class="list_item"><img src="{{ author.profile_photo.url }}" alt="Фото профиля"></td>
                 {% endif %}
                 {% if author.profile_information  %}
-                <td class="list_item">>{{ author.profile_information|truncatewords:20 }}</td>
+                <td class="list_item">{{ author.profile_information|truncatewords:20 }}</td>
                 {% else %}
-                <td class="list_item">>Автор не добавил личную информацию</td>
+                <td class="list_item">Автор не добавил личную информацию</td>
                 {% endif %}
 			</tr>
 
