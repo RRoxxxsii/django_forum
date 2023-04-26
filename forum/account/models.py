@@ -92,6 +92,7 @@ class Author(AbstractBaseUser, PermissionsMixin):
     class Meta:
         verbose_name = _("Аккаунт")
         verbose_name_plural = _("Аккаунты")
+        ordering = ('user_name',)
 
     def __str__(self):
         return self.user_name

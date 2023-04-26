@@ -53,7 +53,7 @@ def subcategory_post(request, subcategory_slug):
     # Paginator
     paginator = Paginator(posts, 8)
     page_number = request.GET.get('page')
-    posts = paginator.get_page(page_number)
+    page_obj = paginator.get_page(page_number)
 
     if request.method == 'POST':
         form = AddCommentForm(request.POST)
@@ -72,9 +72,9 @@ def subcategory_post(request, subcategory_slug):
 
     if request.user.is_authenticated:
         user_name = Author.objects.get(user_name=request.user.user_name)
-        context = {'posts': posts, 'title': subcategory, 'form': form, 'user_name': user_name}
+        context = {'page_obj': page_obj, 'title': subcategory, 'form': form, 'user_name': user_name}
     else:
-        context = {'posts': posts, 'title': subcategory, 'form': form}
+        context = {'page_obj': page_obj, 'title': subcategory, 'form': form}
     return render(request, 'main/posts.html', context=context)
 
 

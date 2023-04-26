@@ -19,10 +19,6 @@ class BlogCategory(models.Model):
         verbose_name_plural = _('Категории')
         ordering = ('category_name', )
 
-    def save(self, *args, **kwargs):
-        self.slug = slugify(self.category_name)
-        super(BlogCategory, self).save(*args, **kwargs)
-
     def get_absolute_url(self):
         return reverse("main:category", args=[self.slug])
 

@@ -1,5 +1,5 @@
 from django.core.exceptions import ObjectDoesNotExist
-from django.test import TestCase, Client
+from django.test import TestCase
 from django.urls import reverse
 from main.models import BlogCategory, SubCategory, Post
 
