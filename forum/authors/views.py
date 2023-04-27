@@ -10,6 +10,7 @@ class AuthorListView(ListView):
     template_name = 'authors/authors_list_view.html'
     context_object_name = 'authors'
     paginate_by = 20
+    extra_context = {'header': 'Список пользователей'}
 
     def get_queryset(self):
         current_user_id = self.request.user.id
@@ -25,18 +26,31 @@ class AuthorDetailView(DetailView):
     def post(self, request, *args, **kwargs):
         other_user = self.get_object()
         current_user = Author.objects.get(user_name=request.user.user_name)
-        followers = other_user.followers.all()
-
+        following = other_user.following.all()
         if str(other_user.user_name) != str(current_user.user_name):
-            if current_user in followers:
-                other_user.followers.remove(current_user.id)
+            if current_user in following:
+                other_user.following.remove(current_user.id)
             else:
-                other_user.followers.add(current_user.id)
+                other_user.following.add(current_user.id)
             other_user.save()
             current_user.save()
 
         return redirect(request.META['HTTP_REFERER'])
 
+
+class AuthorFollowersListView(ListView):
+    paginate_by = 20
+    template_name = 'authors/authors_list_view.html'
+    context_object_name = 'authors'
+    extra_context = {'header': 'Список подписчиков'}
+
+    def get_queryset(self):
+        str(self.request).split('/')[-1].strip("'>")
+        user_obj = Author.objects.get(id=int(str(self.request).split('/')[-1].strip("'>")))
+        print(user_obj)
+        queryset = user_obj.following.all()
+        print(queryset)
+        return queryset
 
 
 
