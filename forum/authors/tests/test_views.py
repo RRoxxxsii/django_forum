@@ -1,7 +1,8 @@
-from django.test import TestCase
+from django.test import TestCase, Client
 from django.urls import reverse
 
 from account.models import Author
+from authors.factories.author import AuthorFactory
 
 
 class AuthorListView(TestCase):
@@ -30,3 +31,11 @@ class AuthorDetailView(TestCase):
         for author in self.authors:
             response = self.client.get(reverse('authors:author_detail_view', kwargs={'pk': author.pk}))
             self.assertEqual(response.status_code, 200)
+
+
+
+
+
+
+
+

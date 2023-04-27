@@ -8,6 +8,25 @@
     <section class="section about-section gray-bg" id="about">
             <div class="container">
 
+                <form method="post">
+                    {% csrf_token %}
+                    {% if user in author.followers.all %}
+
+                    <button class="btn btn-sm btn-primary btn-follow" data-slug="{{ profile.slug }}"
+                            style="margin-bottom: 2%">
+                        Отписаться
+                    </button>
+
+                    {% else %}
+
+                    <button class="btn btn-sm btn-primary btn-follow" data-slug="{{ profile.slug }}"
+                            style="margin-bottom: 2%">
+                        Подписаться
+                    </button>
+                    {% endif %}
+
+                </form>
+                <h5><a href="">Подписчики: {{ author.followers.count }}</a></h5>
 
 
                 <div class="row align-items-center flex-row-reverse">

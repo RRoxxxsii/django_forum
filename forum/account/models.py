@@ -79,6 +79,10 @@ class Author(AbstractBaseUser, PermissionsMixin):
     telegram_link = models.URLField(_('Телеграмм аккаунт'), blank=True)
     city = models.CharField(_('Где живете'), max_length=70, blank=True, null=True)
 
+    following = models.ManyToManyField(
+        "self", blank=True, related_name="followers", symmetrical=False
+    )
+
     # User Status
     is_active = models.BooleanField(default=False)
     is_staff = models.BooleanField(default=False)
@@ -113,5 +117,7 @@ class Author(AbstractBaseUser, PermissionsMixin):
 
     def get_absolute_url(self):
         return reverse('authors:author_detail_view', kwargs={'pk': self.pk})
+
+
 
 
