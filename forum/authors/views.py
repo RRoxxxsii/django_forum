@@ -25,9 +25,12 @@ class AuthorDetailView(DetailView):
 
     def get(self, request, *args, **kwargs):
         other_user = self.get_object()
-        current_user = Author.objects.get(user_name=request.user.user_name)
-        if current_user.id == other_user.id:
-            return redirect('account:personal_profile')
+        try:
+            current_user = Author.objects.get(user_name=request.user.user_name)
+            if current_user.id == other_user.id:
+                return redirect('account:personal_profile')
+        except AttributeError:
+            pass
         return super().get(request, *args, **kwargs)
 
     @method_decorator(login_required)

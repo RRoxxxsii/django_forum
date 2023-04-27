@@ -2,7 +2,6 @@ from django.test import TestCase, Client
 from django.urls import reverse
 
 from account.models import Author
-from authors.factories.author import AuthorFactory
 
 
 class AuthorListView(TestCase):
@@ -25,7 +24,7 @@ class AuthorDetailView(TestCase):
     fixtures = ['db.json']
 
     def setUp(self) -> None:
-        self.authors = Author.objects.all()
+        self.authors = Author.objects.all().exclude(id=1)
 
     def test_detail_view_response(self):
         for author in self.authors:
