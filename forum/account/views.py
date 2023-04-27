@@ -75,7 +75,8 @@ def personal_profile_view(request):
 
     context = {
         'user': request.user,
-        'followers': request.user.followers
+        'followers': request.user.followers,
+        'following': request.user.following
     }
 
     return render(request, template_name, context=context)

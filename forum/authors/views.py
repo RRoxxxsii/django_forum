@@ -1,5 +1,6 @@
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import redirect
+from django.shortcuts import redirect, render
+from django.urls import reverse
 from django.utils.decorators import method_decorator
 from django.views.generic import ListView, DetailView
 
@@ -21,6 +22,13 @@ class AuthorListView(ListView):
 class AuthorDetailView(DetailView):
     model = Author
     template_name = 'authors/author_detail_view.html'
+
+    def get(self, request, *args, **kwargs):
+        other_user = self.get_object()
+        current_user = Author.objects.get(user_name=request.user.user_name)
+        if current_user.id == other_user.id:
+            return redirect('account:personal_profile')
+        return super().get(request, *args, **kwargs)
 
     @method_decorator(login_required)
     def post(self, request, *args, **kwargs):
@@ -45,11 +53,20 @@ class AuthorFollowersListView(ListView):
     extra_context = {'header': 'Список подписчиков'}
 
     def get_queryset(self):
-        str(self.request).split('/')[-1].strip("'>")
         user_obj = Author.objects.get(id=int(str(self.request).split('/')[-1].strip("'>")))
-        print(user_obj)
         queryset = user_obj.following.all()
-        print(queryset)
+        return queryset
+
+
+class AuthorFollowingListView(ListView):
+    paginate_by = 20
+    template_name = 'authors/authors_list_view.html'
+    context_object_name = 'authors'
+    extra_context = {'header': 'Список подписок'}
+
+    def get_queryset(self):
+        user_obj = self.request.user
+        queryset = user_obj.followers.all()
         return queryset
 
 
