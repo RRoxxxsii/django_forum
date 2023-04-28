@@ -1,5 +1,4 @@
 {% extends 'authors/authors_list_view.html' %}
 {% block order %}
-	<h1 class="header-top">{{ header }}</h1>
     <h5 style="text-align: center; margin-top: 20px;"><a href="{% url 'authors:author_filter_by_followers' %}">Фильтровать по количеству подписчиков</a></h5>
 {% endblock %}

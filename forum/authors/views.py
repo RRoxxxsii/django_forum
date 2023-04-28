@@ -8,9 +8,8 @@ from authors.utils import AuthorFollowingFollowersListMixin
 
 
 class AuthorListView(AuthorFollowingFollowersListMixin, ListView):
-    extra_context = {'header': 'Список пользователей'}
+    extra_context = {'headline': 'Список пользователей'}
     template_name = 'authors/ordering_link.html'
-
 
     def get_queryset(self):
         current_user_id = self.request.user.id
@@ -55,7 +54,7 @@ class AuthorDetailView(DetailView):
 
 
 class AuthorFollowersListView(AuthorFollowingFollowersListMixin, ListView):
-    extra_context = {'header': 'Список подписчиков'}
+    extra_context = {'headline': 'Список подписчиков'}
 
     def get_queryset(self):
         user_obj = Author.objects.get(id=int(str(self.request).split('/')[-1].strip("'>")))
@@ -64,7 +63,7 @@ class AuthorFollowersListView(AuthorFollowingFollowersListMixin, ListView):
 
 
 class AuthorFollowingListView(AuthorFollowingFollowersListMixin, ListView):
-    extra_context = {'header': 'Список подписок'}
+    extra_context = {'headline': 'Список подписок'}
 
     def get_queryset(self):
         user_obj = self.request.user
