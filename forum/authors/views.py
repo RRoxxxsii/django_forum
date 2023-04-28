@@ -46,7 +46,7 @@ class AuthorDetailView(DetailView):
             other_user.save()
             current_user.save()
 
-        return redirect(request.META['HTTP_REFERER'])
+        return redirect(request.META.get('HTTP_REFERER', '/'))
 
 
 class AuthorFollowersListView(ListView):
