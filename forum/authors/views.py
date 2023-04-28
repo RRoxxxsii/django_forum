@@ -5,12 +5,10 @@ from django.utils.decorators import method_decorator
 from django.views.generic import ListView, DetailView
 
 from account.models import Author
+from account.utils import AuthorFollowingFollowersListMixin
 
 
-class AuthorListView(ListView):
-    template_name = 'authors/authors_list_view.html'
-    context_object_name = 'authors'
-    paginate_by = 20
+class AuthorListView(AuthorFollowingFollowersListMixin, ListView):
     extra_context = {'header': 'Список пользователей'}
 
     def get_queryset(self):
@@ -49,10 +47,7 @@ class AuthorDetailView(DetailView):
         return redirect(request.META.get('HTTP_REFERER', '/'))
 
 
-class AuthorFollowersListView(ListView):
-    paginate_by = 20
-    template_name = 'authors/authors_list_view.html'
-    context_object_name = 'authors'
+class AuthorFollowersListView(AuthorFollowingFollowersListMixin, ListView):
     extra_context = {'header': 'Список подписчиков'}
 
     def get_queryset(self):
@@ -61,10 +56,7 @@ class AuthorFollowersListView(ListView):
         return queryset
 
 
-class AuthorFollowingListView(ListView):
-    paginate_by = 20
-    template_name = 'authors/authors_list_view.html'
-    context_object_name = 'authors'
+class AuthorFollowingListView(AuthorFollowingFollowersListMixin, ListView):
     extra_context = {'header': 'Список подписок'}
 
     def get_queryset(self):
