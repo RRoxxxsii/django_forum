@@ -1,20 +1,27 @@
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import redirect, render
-from django.urls import reverse
+from django.shortcuts import redirect
 from django.utils.decorators import method_decorator
 from django.views.generic import ListView, DetailView
 
 from account.models import Author
-from account.utils import AuthorFollowingFollowersListMixin
+from authors.utils import AuthorFollowingFollowersListMixin
 
 
 class AuthorListView(AuthorFollowingFollowersListMixin, ListView):
     extra_context = {'header': 'Список пользователей'}
+    template_name = 'authors/ordering_link.html'
+
 
     def get_queryset(self):
         current_user_id = self.request.user.id
         queryset = Author.objects.exclude(id=current_user_id)
         return queryset
+
+
+class AuthorFilterByFollowersAmount(AuthorListView, AuthorFollowingFollowersListMixin, ListView):
+
+    def get_queryset(self):
+        return super().get_queryset().order_by('-following')
 
 
 class AuthorDetailView(DetailView):

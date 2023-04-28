@@ -6,7 +6,10 @@
 <link rel="stylesheet" href="{% static 'main/css/authors_list_view.css' %}">
 <link rel="stylesheet" href="{% static 'main/css/posts.css' %}">
 
-	<h1>{{ header }}</h1>
+    {% block order %}
+
+    {% endblock %}
+
 	<table>
 		<thead>
 			<tr>
@@ -17,6 +20,7 @@
 			</tr>
 		</thead>
 		<tbody>
+
 
 			{% for author in authors %}
 			<tr>

@@ -84,9 +84,6 @@ def personal_profile_view(request):
 
 @login_required(redirect_field_name='login')
 def edit_details(request):
-    """
-    Do not forget about transactions
-    """
     if request.method == 'POST':
         user_form = UserEditForm(instance=request.user, data=request.POST, files=request.FILES)
         gender_select_data = user_form.get_tuples_from_genders()
