@@ -1,0 +1,21 @@
+{% extends 'main/base.html' %}
+{% load static %}
+{% block content %}
+    
+<link rel="stylesheet" href="{% static 'main/css/forms.css' %}">
+
+<div class="form">
+    <form class="account-form px-4 pt-4" method="post" enctype="multipart/form-data">
+
+        {% csrf_token %}
+        {{ form }}
+
+         <button class="btn btn-primary btn-block py-2 mb-4 mt-5 fw-bold w-100" type="submit"
+                        value="Save changes"> Отправить письмо
+        </button>
+
+    </form>
+
+</div>
+
+{% endblock %}

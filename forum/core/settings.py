@@ -143,4 +143,8 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 # Redirects
 LOGIN_URL = '/account/login/'
 
+# Admins
+
+ADMINS = [('RRoxxxsii', 'mishabur38@gmail.com'), ]
+
 

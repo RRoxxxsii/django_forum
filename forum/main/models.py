@@ -63,3 +63,11 @@ class Post(models.Model):
         verbose_name_plural = _('Посты')
         ordering = ('-created_at', 'author')
 
+
+class FeedBack(models.Model):
+
+    text = models.TextField()
+
+    def __str__(self):
+        return self.text
+

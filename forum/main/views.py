@@ -1,13 +1,15 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import ObjectDoesNotExist
+from django.core.mail import mail_admins, send_mail
 from django.core.paginator import Paginator
 from django.db.models import Max, Count, Subquery, OuterRef
 from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404, redirect
-from django.views.generic import TemplateView, UpdateView, DeleteView
+from django.template.loader import render_to_string
+from django.views.generic import TemplateView, UpdateView, DeleteView, FormView
 from django.contrib import messages
 from account.models import Author
-from main.forms import AddCommentForm
+from main.forms import AddCommentForm, FeedBackForm
 from main.models import BlogCategory, SubCategory, Post
 
 
@@ -122,5 +124,24 @@ class PostDeleteView(LoginRequiredMixin, DeleteView):
         else:
             post.delete()
             return HttpResponseRedirect('/')
+
+
+class FeedBackView(LoginRequiredMixin, FormView):
+    template_name = 'main/feedback_form.html'
+    form_class = FeedBackForm
+    success_url = '/'
+    extra_context = {'form': FeedBackForm()}
+
+    def post(self, request, *args, **kwargs):
+        message = render_to_string(
+            "main/email_to_admin_template.html",
+            {
+                'user_email': request.user.email,
+                'message_text': request.POST.get('text')
+            },
+        )
+        mail_admins(subject='Обратная связь', message=message, fail_silently=False)
+        return super().post(self, request, *args, **kwargs)
+
 
 

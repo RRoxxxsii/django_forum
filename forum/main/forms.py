@@ -1,4 +1,4 @@
-from main.models import Post
+from main.models import Post, FeedBack
 from django import forms
 
 
@@ -21,3 +21,16 @@ class AddCommentForm(forms.ModelForm):
         model = Post
         fields = ('title', 'text')
 
+
+class FeedBackForm(forms.ModelForm):
+    text = forms.CharField(required=False,
+                           widget=forms.Textarea(attrs={
+                               'class': 'form-control',
+                               'id': 'exampleFormControlTextarea1',
+                               'rows': '5',
+                               'placeholder': 'Задайте вопрос'
+                           }), label='Ваш вопрос или пожелание')
+
+    class Meta:
+        model = FeedBack
+        fields = ('text',)

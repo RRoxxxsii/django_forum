@@ -23,7 +23,7 @@
           <li><a href="{% url 'authors:author_list_view' %}" class="nav-link px-2 text-white">Авторы</a></li>
           <li><a href="#" class="nav-link px-2 text-white">Категории</a></li>
           <li><a href="#" class="nav-link px-2 text-white">Топ статьи</a></li>
-          <li><a href="#" class="nav-link px-2 text-white">Вопросы нам</a></li>
+          <li><a href="{% url 'main:feedback' %}" class="nav-link px-2 text-white">Вопросы нам</a></li>
           <li><a href="#" class="nav-link px-2 text-white">О сайте</a></li>
 
             {% if user.is_superuser %}
