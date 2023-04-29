@@ -122,8 +122,7 @@ def edit_details(request):
             else:
                 messages.error(request, f'Пользователь с именем {name_to_change} уже существует, попробуйте что-то другое')
 
-        else:
-            print(user_form.errors)
+
 
     else:
         user_form = UserEditForm(instance=request.user)

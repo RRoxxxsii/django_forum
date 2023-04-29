@@ -1,5 +1,6 @@
 from main.models import Post, FeedBack
 from django import forms
+from captcha.fields import CaptchaField
 
 
 class AddCommentForm(forms.ModelForm):
@@ -23,13 +24,15 @@ class AddCommentForm(forms.ModelForm):
 
 
 class FeedBackForm(forms.ModelForm):
-    text = forms.CharField(required=False,
+    text = forms.CharField(required=True,
                            widget=forms.Textarea(attrs={
                                'class': 'form-control',
                                'id': 'exampleFormControlTextarea1',
                                'rows': '5',
                                'placeholder': 'Задайте вопрос'
                            }), label='Ваш вопрос или пожелание')
+
+    captcha = CaptchaField()
 
     class Meta:
         model = FeedBack

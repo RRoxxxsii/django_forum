@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'captcha',
     'main.apps.MainConfig',
     'account.apps.AccountConfig',
     'authors.apps.AuthorsConfig',
@@ -147,4 +148,12 @@ LOGIN_URL = '/account/login/'
 
 ADMINS = [('RRoxxxsii', 'mishabur38@gmail.com'), ]
 
+# FILE CACHE
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
+        'LOCATION': os.path.join(BASE_DIR, 'forum_cache'),
+    }
+}
 
