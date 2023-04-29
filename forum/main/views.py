@@ -130,19 +130,15 @@ class FeedBackView(LoginRequiredMixin, FormView):
     success_url = '/'
     template_name = 'main/feedback_form.html'
 
-    def post(self, request, *args, **kwargs):
-        form = self.get_form()
+    def form_valid(self, form):
         message = render_to_string(
             "main/email_to_admin_template.html",
             {
-                'user_email': request.user.email,
-                'message_text': request.POST.get('text')
+                'user_email': self.request.user.email,
+                'message_text': form.cleaned_data['text']
             },
         )
         mail_admins(subject='Обратная связь', message=message, fail_silently=False)
-        return super().post(self, request, *args, **kwargs)
-
-
-
+        return super().form_valid(form)
 
 

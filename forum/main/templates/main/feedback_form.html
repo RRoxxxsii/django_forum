@@ -8,12 +8,8 @@
     <form class="account-form px-4 pt-4" method="post" enctype="multipart/form-data">
 
 
-        {% if form.errors %}
-            <div class="alert alert-primary" role="alert">
-                Ошибка: Капча не прошла проверку!
-            </div>
-        {% endif %}
         {% csrf_token %}
+
 
         {{ form.as_p }}
 

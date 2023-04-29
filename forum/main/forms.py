@@ -32,7 +32,7 @@ class FeedBackForm(forms.ModelForm):
                                'placeholder': 'Задайте вопрос'
                            }), label='Ваш вопрос или пожелание')
 
-    captcha = CaptchaField()
+    captcha = CaptchaField(error_messages={'invalid': "Капча введена неверно. Пожалуйста, попробуйте еще раз."})
 
     class Meta:
         model = FeedBack

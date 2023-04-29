@@ -32,42 +32,65 @@
                             <div class="row about-list">
                                 <div class="col-md-6">
 
-                                    {% if user.country %}
-                                    <div class="media">
-                                        <label>Residence</label>
-                                        <p>{{ user.country }}</p>
-                                    </div>
-                                    {% endif %}
 
-                                    {% if user.city %}
                                     <div class="media">
-                                        <label>Address</label>
-                                        <p>{{ user.city }}</p>
+
+                                        <label>Страна</label>
+                                        <p>{% if user.country %}
+                                            {{ user.country }}
+                                            </p>
+                                        {% else %}
+                                            Неизвестно
+                                        {% endif %}
                                     </div>
-                                    {% endif %}
+
+
+                                    <div class="media">
+                                        <label>Адрес</label>
+                                        <p>
+                                            {% if user.city %}
+                                                {{ user.city }}
+                                            {% else %}
+                                                Неизвестно
+                                            {% endif %}
+                                        </p>
+                                    </div>
+
 
                                 </div>
                                 <div class="col-md-6">
-                                    {% if user.email %}
                                     <div class="media">
-                                        <label>E-mail</label>
-                                        <p> {{ user.email }}</p>
+                                        <label>Почта</label>
+                                        <p>
+                                            {% if user.email %}
+                                                {{ user.email }}
+                                            {% else %}
+                                                Неизвестно
+                                            {% endif %}
+                                        </p>
                                     </div>
-                                    {% endif %}
 
-                                    {% if user.mobile %}
                                     <div class="media">
-                                        <label>Phone</label>
-                                        <p>{{ user.mobile }}</p>
+                                        <label>Телефон</label>
+                                        <p>
+                                            {% if user.mobile %}
+                                                {{ user.mobile }}
+                                            {% else %}
+                                                Неизвестно
+                                            {% endif %}
+                                        </p>
                                     </div>
-                                    {% endif %}
 
-                                    {% if user.telegram_link %}
                                     <div class="media">
-                                        <label>Telegram</label>
-                                        <a href="{{ user.telegram_link }}" class="media-link"><p>{{ user.telegram_link }}</p></a>
+                                        <label>Телеграм</label>
+                                        {% if user.telegram_link %}
+                                            <a href="{{ user.telegram_link }}" class="media-link">
+                                                <p>{{ user.telegram_link }}</p></a>
+                                        {% else %}
+                                            <p>Неизвестно</p>
+                                        {% endif %}
+
                                     </div>
-                                    {% endif %}
 
                                 </div>
                             </div>
@@ -104,12 +127,7 @@
                                 <p class="m-0px font-w-600">Photo Capture</p>
                             </div>
                         </div>
-                        <div class="col-6 col-lg-3">
-                            <div class="count-data text-center">
-                                <h6 class="count h2" data-to="190" data-speed="190">190</h6>
-                                <p class="m-0px font-w-600">Telephonic Talk</p>
-                            </div>
-                        </div>
+
                     </div>
                 </div>
             </div>
