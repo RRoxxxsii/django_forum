@@ -5,7 +5,7 @@ from account.models import Author
 
 
 class AuthorListView(TestCase):
-    fixtures = ['db.json']
+    fixtures = ['fixtures.json']
 
     def setUp(self) -> None:
         self.users_amount = Author.objects.all().count()
@@ -21,7 +21,7 @@ class AuthorListView(TestCase):
 
 
 class AuthorDetailView(TestCase):
-    fixtures = ['db.json']
+    fixtures = ['fixtures.json']
 
     def setUp(self) -> None:
         self.authors = Author.objects.all().exclude(id=1)
@@ -39,7 +39,7 @@ class FollowOtherProfileView(TestCase):
     of other users.
     """
 
-    fixtures = ['test_data.json']
+    fixtures = ['fixtures.json']
 
     def setUp(self) -> None:
         self.user1 = Author.objects.get(id=1)
@@ -95,7 +95,8 @@ class FollowersFollowingPersonalProfileView(TestCase):
     Test class to test changes and dynamic data on your personal profile page.
     Especially check followers and following.
     """
-    fixtures = ['test_data.json']
+    fixtures = ['fixtures.json']
+
 
     def setUp(self) -> None:
         self.user1 = Author.objects.get(id=1)
@@ -145,7 +146,8 @@ class FollowersFollowingPersonalProfileView(TestCase):
 
 
 class FollowUserNotAuthenticated(TestCase):
-    fixtures = ['test_data.json']
+    fixtures = ['fixtures.json']
+
 
     def setUp(self) -> None:
         self.user1 = Author.objects.get(id=1)

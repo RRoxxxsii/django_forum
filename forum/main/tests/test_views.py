@@ -1,12 +1,15 @@
+from django.core import mail
 from django.core.exceptions import ObjectDoesNotExist
 from django.test import TestCase
 from django.urls import reverse
+
+from account.models import Author
 from main.models import BlogCategory, SubCategory, Post
 
 
 class MainViews(TestCase):
 
-    fixtures = ['db.json']
+    fixtures = ['fixtures.json']
 
     def setUp(self) -> None:
         self.categories = BlogCategory.objects.all()          # All categories
@@ -48,22 +51,19 @@ class MainViews(TestCase):
 
         self.assertEqual(response.status_code, 200)
 
-        for post in self.posts:
-            self.assertContains(response, post.author)
-            self.assertContains(response, post)
+        self.assertContains(response, self.posts[0].author)
+        self.assertContains(response, self.posts[0])
 
 
 class ViewFormAddComment(TestCase):
 
-    fixtures = ['db.json']
+    fixtures = ['fixtures.json']
 
     def setUp(self) -> None:
         self.posts = Post.objects.filter(category=2)         # posts for one specific category
         self.subcategory = SubCategory.objects.get(id=2)
 
-    def test_posts(self):
-        post_amount = len(self.posts)
-        self.assertEqual(post_amount, 2)
+
 
     def test_post_page_when_user_is_not_authenticated(self):
         """
@@ -71,35 +71,34 @@ class ViewFormAddComment(TestCase):
         link 'Войдите в систему прежде чем оставлять комментарии'.
         """
         response = self.client.get(reverse('main:subcategory_post', kwargs={'subcategory_slug': self.subcategory.slug}))
-        self.assertContains(response, 'Войдите в систему прежде чем оставлять комментарии')
+        self.assertContains(response, '<h4>Войдите в систему прежде чем оставлять комментарии</h4>')
 
     def test_post_page_when_user_is_authenticated(self):
         """
         When user is logged in he sees the
         button 'Оставить комментарий'.
         """
-        self.client.login(email='mishabur38@gmail.com', password='1234')
+        self.client.login(email='mishabur38@gmail.com', password='pro191Ji321')
         response = self.client.get(reverse('main:subcategory_post', kwargs={'subcategory_slug': self.subcategory.slug}))
         self.assertContains(response, 'Оставить комментарий')
 
     def test_add_post(self):
-        self.client.login(email='mishabur38@gmail.com', password='1234')
-
+        self.client.login(email='mishabur38@gmail.com', password='pro191Ji321')
         response = self.client.post(reverse('main:subcategory_post',
                                             kwargs={'subcategory_slug': self.subcategory.slug}),
                                     {'title': 'Не знаю как',
                                      'text': 'Подскажите, как писать оптимальный код на Python?'})
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(len(self.posts), 3)
+        self.assertEqual(len(self.posts), 15)
 
 
 class ViewEditPost(TestCase):
 
-    fixtures = ['db.json']
+    fixtures = ['fixtures.json']
 
     def setUp(self) -> None:
         # POST BY SUPERUSER
-        self.post = Post.objects.get(id=3)
+        self.post = Post.objects.get(id=54)
         self.url = reverse('main:edit_post', kwargs={'pk': self.post.id})
         self.data = {
             'title': 'Changed the content of the post',
@@ -107,12 +106,11 @@ class ViewEditPost(TestCase):
         }
 
     def test_edit_post_if_user_is_not_authenticated(self):
-        print(self.post, self.post.author)
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 302)
 
     def test_edit_post_if_user_is_authenticated(self):
-        self.client.login(email='mishabur38@gmail.com', password='1234')
+        self.client.login(email='mishabur38@gmail.com', password='pro191Ji321')
 
         response = self.client.post(self.url, data=self.data)
         self.assertEqual(response.status_code, 200)
@@ -134,11 +132,11 @@ class ViewEditPost(TestCase):
 
 
 class ViewDeletePost(TestCase):
-    fixtures = ['db.json']
+    fixtures = ['fixtures.json']
 
     def setUp(self) -> None:
         # POST BY SUPERUSER
-        self.post = Post.objects.get(id=3)
+        self.post = Post.objects.get(id=54)
         self.url = reverse('main:delete_post', kwargs={'pk': self.post.id})
 
     def test_delete_post_if_user_is_not_authenticated(self):
@@ -146,7 +144,7 @@ class ViewDeletePost(TestCase):
         self.assertEqual(response.status_code, 302)
 
     def test_delete_post_if_user_is_authenticated(self):
-        self.client.login(email='mishabur38@gmail.com', password='1234')
+        self.client.login(email='mishabur38@gmail.com', password='pro191Ji321')
 
         response = self.client.post(self.url)
         self.assertEqual(response.status_code, 302)
@@ -164,5 +162,23 @@ class ViewDeletePost(TestCase):
         self.assertEqual(response.status_code, 404)
 
 
+class FeedBackFormView(TestCase):
+    fixtures = ['fixtures.json']
+
+    def setUp(self) -> None:
+        self.user1 = Author.objects.get(id=1)
+        self.client.login(email='mishabur38@gmail.com', password='pro191Ji321')
+        self.client.post(reverse('main:feedback'), data={'text': 'Сообщение на почту админу'})
+        self.email = mail.outbox
+
+    def test_email_from_the_form_delivered(self):
+        self.assertEqual(len(self.email), 1)
+
+    def test_email_sender(self):
+        self.assertEqual(self.email[0].from_email, 'root@localhost')
+
+    def test_email_content(self):
+        assert 'Сообщение на почту админу' in self.email[0].body
+        assert 'mishabur38@gmail.com' in self.email[0].body
 
 

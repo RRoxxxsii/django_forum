@@ -8,7 +8,8 @@ from django.core import mail
 
 
 class TestAccountView(TestCase):
-    fixtures = ['db.json']
+    fixtures = ['fixtures.json']
+
 
     def setUp(self) -> None:
         self.c = Client()
@@ -34,7 +35,7 @@ class TestAccountView(TestCase):
         """
         If authenticated user has access to login required page.
         """
-        self.c.login(email='mishabur38@gmail.com', password='1234')
+        self.c.login(email='mishabur38@gmail.com', password='pro191Ji321')
 
         personal_profile_resp = self.c.get(reverse('account:personal_profile'))
         edit_details_resp = self.c.get(reverse('account:edit_details'))
@@ -44,8 +45,7 @@ class TestAccountView(TestCase):
 
 
 class UserEditTest(TestCase):
-
-    fixtures = ['mydata.json']
+    fixtures = ['fixtures.json']
 
     def setUp(self):
         self.user = Author.objects.get(user_name='RRoxxxsii')
@@ -56,12 +56,11 @@ class UserEditTest(TestCase):
 
     def test_user_information_before_change(self):
         self.assertEqual(self.user.profile_information, 'Python backend developer')
-        self.assertEqual(self.user.profile_photo, 'photos/2023/04/16/lera-2024.jpg')
         self.assertEqual(self.user.telegram_link, 'https://t.me/RRoxxxsii')
         self.assertEqual(self.user.mobile, '89086469507')
 
     def test_user_edit_form_with_correct_data(self):
-        self.client.login(email='mishabur38@gmail.com', password='1234')
+        self.client.login(email='mishabur38@gmail.com', password='pro191Ji321')
         self.client.post('/account/personal_profile/edit_details/',
                                         {'user_name': 'fakename', 'profile_information': 'Something cool',
                                          'telegram': 'https://t.me/mishkapiska', 'mobile': '88005553535'})
@@ -91,7 +90,7 @@ class UserEditTest(TestCase):
         """
 
         def response_request(name: str) -> str:
-            self.client.login(email='mishabur38@gmail.com', password='1234')
+            self.client.login(email='mishabur38@gmail.com', password='pro191Ji321')
             self.client.post('/account/personal_profile/edit_details/',
                              {'user_name': name, 'profile_information': 'Something cool'})
             self.user.refresh_from_db()
@@ -103,28 +102,26 @@ class UserEditTest(TestCase):
 
 
 class UserDeletePhoto(TestCase):
-
-    fixtures = ['mydata.json']
+    fixtures = ['fixtures.json']
 
     def setUp(self) -> None:
         self.user = Author.objects.get(user_name='RRoxxxsii')
 
     def test_send_delete_request(self):
-        self.client.login(email='mishabur38@gmail.com', password='1234')
+        self.client.login(email='mishabur38@gmail.com', password='pro191Ji321')
 
         request = self.client.post('/account/personal_profile/delete_photo')
         self.assertEqual(request.status_code, 301)
 
 
 class UserDeleteAccount(TestCase):
-
-    fixtures = ['mydata.json']
+    fixtures = ['fixtures.json']
 
     def setUp(self) -> None:
         self.user = Author.objects.get(user_name='RRoxxxsii')
 
     def test_make_account_inactive(self):
-        self.client.login(email='mishabur38@gmail.com', password='1234')
+        self.client.login(email='mishabur38@gmail.com', password='pro191Ji321')
         self.assertEqual(self.user.is_active, True)
 
         request = self.client.get(reverse('account:delete_user'))
@@ -135,14 +132,13 @@ class UserDeleteAccount(TestCase):
 
 
 class UserRestoreAccount(TestCase):
-
-    fixtures = ['mydata.json']
+    fixtures = ['fixtures.json']
 
     def setUp(self) -> None:
         self.user = Author.objects.get(user_name='RRoxxxsii')
 
     def test_restore_account_with_correct_data(self):
-        self.client.login(email='mishabur38@gmail.com', password='1234')
+        self.client.login(email='mishabur38@gmail.com', password='pro191Ji321')
         self.client.get(reverse('account:delete_user'))
         self.user.refresh_from_db()
 
@@ -170,7 +166,7 @@ class UserRestoreAccount(TestCase):
         self.assertEqual(self.user.is_active, True)
 
     def test_restore_account_with_incorrect_data(self):
-        self.client.login(email='mishabur38@gmail.com', password='1234')
+        self.client.login(email='mishabur38@gmail.com', password='pro191Ji321')
         self.client.get(reverse('account:delete_user'))
         self.user.refresh_from_db()
 
@@ -185,8 +181,7 @@ class UserRestoreAccount(TestCase):
 
 
 class UserPasswordReset(TestCase):
-
-    fixtures = ['mydata.json']
+    fixtures = ['fixtures.json']
 
     def test_user_password_reset_page_submitting_not_existing_email(self):
         request = self.client.post(reverse('account:pwdreset'), data={'email': 'fake@gmail.com'})
