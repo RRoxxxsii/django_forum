@@ -1,3 +1,5 @@
+import datetime
+
 from django.contrib import messages
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
@@ -8,10 +10,12 @@ from django.http import HttpResponse
 from django.shortcuts import redirect, render
 from django.template.loader import render_to_string
 from django.urls import reverse_lazy, reverse
+from django.utils import timezone
 from django.utils.encoding import force_bytes, force_str
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 
 from account.forms import RegistrationForm, UserEditForm, UserRestoreForm
+from main.models import Post
 from .models import Author
 from .tokens import account_activation_token
 
@@ -76,8 +80,11 @@ def personal_profile_view(request):
     context = {
         'user': request.user,
         'followers': request.user.followers,
-        'following': request.user.following
+        'following': request.user.following,
+        'posts_amount': Post.objects.filter(author=request.user).count(),
+        'days_registered': (timezone.now() - request.user.created).days
     }
+
 
     return render(request, template_name, context=context)
 
