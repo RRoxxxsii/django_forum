@@ -65,8 +65,6 @@ class ViewFormAddComment(TestCase):
         self.posts = Post.objects.filter(category=2)         # posts for one specific category
         self.subcategory = SubCategory.objects.get(id=2)
 
-
-
     def test_post_page_when_user_is_not_authenticated(self):
         """
         When user is not logged in he sees the

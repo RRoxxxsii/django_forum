@@ -67,8 +67,11 @@ class FollowOtherProfileView(TestCase):
     def test_template_user_is_followed(self):
         self.client.post(self.url) # response to press the button
         response = self.client.get(self.url)   # response to view changes
+        print(response.content.decode())
         self.assertContains(response, 'Подписчики</a>: 1')  # one follower
         self.assertContains(response, 'Отписаться')
+        self.assertContains(response, """<h6 class="count h2" data-to="500" data-speed="500">1</h6>
+                                <p class="m-0px font-w-600">Подписчиков</p>""")
 
     def test_unfollow_amount(self):
         self.client.post(self.url)      # follow to the author
@@ -84,6 +87,8 @@ class FollowOtherProfileView(TestCase):
         response = self.client.get(self.url)  # response to view changes
         self.assertContains(response, 'Подписчики</a>: 0')  # zero followers
         self.assertContains(response, 'Подписаться')
+        self.assertContains(response, """<h6 class="count h2" data-to="500" data-speed="500">0</h6>
+                                <p class="m-0px font-w-600">Подписчиков</p>""")
 
     def test_personal_profile_followers_and_following(self):
         self.client.post(self.url)
@@ -109,6 +114,8 @@ class FollowersFollowingPersonalProfileView(TestCase):
         response = self.client.get(reverse('account:personal_profile'))    # follow another author
         self.assertContains(response, 'Подписки</a>: 1')
         self.assertContains(response, 'Подписчики</a>: 0')
+        self.assertContains(response, """<h6 class="count h2" data-to="150" data-speed="150">1</h6>
+                                <p class="m-0px font-w-600">Подписок</p>""")
 
     def test_followers_list_view(self):
         self.client.post(self.url)               # login to a user and make request to become a follower
@@ -148,7 +155,6 @@ class FollowersFollowingPersonalProfileView(TestCase):
 class FollowUserNotAuthenticated(TestCase):
     fixtures = ['fixtures.json']
 
-
     def setUp(self) -> None:
         self.user1 = Author.objects.get(id=1)
         self.user2 = Author.objects.get(id=10)
@@ -157,6 +163,5 @@ class FollowUserNotAuthenticated(TestCase):
     def test_follow_when_user_is_undefined(self):
         response = self.client.post(self.url)
         self.assertRedirects(response, '/account/login/?next=/authors/10')
-
 
 
