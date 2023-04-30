@@ -1,10 +1,12 @@
+from captcha.fields import CaptchaField
 from django.core import mail
 from django.core.exceptions import ObjectDoesNotExist
-from django.test import TestCase
+from django.test import TestCase, override_settings
 from django.urls import reverse
 
 from account.models import Author
 from main.models import BlogCategory, SubCategory, Post
+from captcha.conf import settings as captcha_settings
 
 
 class MainViews(TestCase):
@@ -163,13 +165,20 @@ class ViewDeletePost(TestCase):
 
 
 class FeedBackFormView(TestCase):
+
     fixtures = ['fixtures.json']
 
     def setUp(self) -> None:
         self.user1 = Author.objects.get(id=1)
         self.client.login(email='mishabur38@gmail.com', password='pro191Ji321')
-        self.client.post(reverse('main:feedback'), data={'text': 'Сообщение на почту админу'})
-        self.email = mail.outbox
+        try:
+            captcha_settings.CAPTCHA_TEST_MODE = True
+            self.response = self.client.post(reverse('main:feedback'),
+                                             data={'text': 'Сообщение на почту админу', "captcha_0": "PASSED",
+                                                   "captcha_1": "PASSED"})
+            self.email = mail.outbox
+        finally:
+            captcha_settings.CAPTCHA_TEST_MODE = False
 
     def test_email_from_the_form_delivered(self):
         self.assertEqual(len(self.email), 1)
@@ -180,5 +189,3 @@ class FeedBackFormView(TestCase):
     def test_email_content(self):
         assert 'Сообщение на почту админу' in self.email[0].body
         assert 'mishabur38@gmail.com' in self.email[0].body
-
-
