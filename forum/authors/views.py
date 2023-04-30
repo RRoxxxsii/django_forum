@@ -1,10 +1,12 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect
+from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.views.generic import ListView, DetailView
 
 from account.models import Author
 from authors.utils import AuthorFollowingFollowersListMixin
+from main.models import Post
 
 
 class AuthorListView(AuthorFollowingFollowersListMixin, ListView):
@@ -36,6 +38,15 @@ class AuthorDetailView(DetailView):
         except AttributeError:
             pass
         return super().get(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        other_user = self.get_object()
+        context = super().get_context_data(**kwargs)
+        context['following'] = other_user.followers.count()
+        context['followers'] = other_user.following.count()
+        context['posts_amount'] = Post.objects.filter(author=other_user).count()
+        context['days_registered'] = (timezone.now() - other_user.created).days
+        return context
 
     @method_decorator(login_required)
     def post(self, request, *args, **kwargs):
