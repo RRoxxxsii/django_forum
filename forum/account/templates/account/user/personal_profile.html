@@ -20,6 +20,8 @@
                 {% endif %}
                 <h5><a href="{% url 'authors:followers_list_view' user.pk %}">Подписчики</a>: {{ user.following.count }}</h5>
                 <h5><a href="{% url 'authors:following_list_view' user.pk %}">Подписки</a>: {{ user.followers.count }}</h5>
+                <h5><a href="{% url 'account:edit_details' %}">Редактировать профиль</a></h5>
+
 
 
 
