@@ -22,7 +22,7 @@
                 </svg></a>
                 {% endif %}
 
-                Автор: <a href="">{{ p.author }}</a>
+                Автор: <a href="{{ p.author.get_absolute_url }}">{{ p.author }}</a>
 
                 <p class="last">Опубликовано: {{p.created_at|date:"d-m-Y H:i:s"}}</p>
 
@@ -59,7 +59,7 @@
     {% endfor %}
     {% endfor %}
     {% endif %}
-
+v
     {% if messages %}
     <div class="alert alert-warning" alert="{{ messages.tags }}" role="alert">
         {% for message in messages %}
