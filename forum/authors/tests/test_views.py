@@ -102,7 +102,6 @@ class FollowersFollowingPersonalProfileView(TestCase):
     """
     fixtures = ['fixtures.json']
 
-
     def setUp(self) -> None:
         self.user1 = Author.objects.get(id=1)
         self.user2 = Author.objects.get(id=10)
