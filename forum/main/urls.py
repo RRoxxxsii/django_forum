@@ -10,7 +10,6 @@ urlpatterns = [
     path('category/posts/<slug:subcategory_slug>/', views.subcategory_post, name='subcategory_post'),
     path('category/posts/delete/<int:pk>', views.PostDeleteView.as_view(), name='delete_post'),
     path('category/posts/update/<int:pk>', views.PostUpdateView.as_view(), name='edit_post'),
-    path('feedback/', views.FeedBackView.as_view(), name='feedback')
-
+    path('feedback/', views.FeedBackView.as_view(), name='feedback'),
 ]
 

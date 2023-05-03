@@ -1,3 +1,4 @@
+from account.models import Author
 from main.models import Post, FeedBack
 from django import forms
 from captcha.fields import CaptchaField
@@ -37,3 +38,6 @@ class FeedBackForm(forms.ModelForm):
     class Meta:
         model = FeedBack
         fields = ('text',)
+
+
+

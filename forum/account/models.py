@@ -69,7 +69,7 @@ class Gender(models.Model):
 
 class Author(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(_('почтовый адрес'), unique=True)
-    user_name = models.CharField(max_length=150)
+    user_name = models.CharField(max_length=150, unique=True)
     mobile = models.CharField(max_length=20, blank=True)
     gender = models.ForeignKey(Gender, on_delete=models.SET_NULL, blank=True, null=True)
     profile_photo = models.ImageField(upload_to='photos/%Y/%m/%d/', help_text=_('Фото профиля'), blank=True)

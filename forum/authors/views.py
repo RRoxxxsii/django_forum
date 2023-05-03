@@ -1,5 +1,9 @@
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import redirect
+from django.http import HttpResponseRedirect, HttpResponse
+
+from django.shortcuts import redirect, get_object_or_404, render
+from django.urls import reverse
 from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.views.generic import ListView, DetailView
@@ -80,6 +84,33 @@ class AuthorFollowingListView(AuthorFollowingFollowersListMixin, ListView):
         user_obj = self.request.user
         queryset = user_obj.followers.all()
         return queryset
+
+
+class SearchAuthorView(DetailView):
+    template_name = 'authors/author_detail_view.html'
+    model = Author
+    queryset = Author.objects.all()
+
+    def get_object(self, queryset=None):
+        query = self.request.GET.get('q')
+        try:
+            author = Author.objects.get(user_name__iexact=query)
+            return author
+        except Author.DoesNotExist:
+            pass
+
+    def get(self, request, *args, **kwargs):
+        author = self.get_object()
+        if author:
+            url = reverse('authors:author_detail_view', kwargs={'pk': author.pk})
+            return HttpResponseRedirect(url)
+        else:
+            return redirect(request.META.get('HTTP_REFERER'))
+
+
+
+
+
 
 
 
