@@ -164,3 +164,21 @@ class FollowUserNotAuthenticated(TestCase):
         self.assertRedirects(response, '/account/login/?next=/authors/10')
 
 
+class SearchAuthor(TestCase):
+    fixtures = ['fixtures.json']
+
+    def setUp(self) -> None:
+        self.user1 = Author.objects.get(id=1)
+
+    def test_search_existing_author_not_ignoring_letter_case(self):
+        url = reverse('authors:search_author') + '?q=Miha'
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.url, reverse('authors:author_detail_view', kwargs={'pk': 9}))
+
+    def test_search_existing_author_ignoring_letter_case(self):
+        url = reverse('authors:search_author') + '?q=mIhA'
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.url, reverse('authors:author_detail_view', kwargs={'pk': 9}))
+
