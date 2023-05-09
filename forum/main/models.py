@@ -10,9 +10,9 @@ class BlogCategory(models.Model):
     This model describes a category name
     """
 
-    category_name = models.CharField(max_length=255, unique=True)
-    slug = models.SlugField(max_length=255, unique=True)
-    category_photo = models.ImageField(blank=True)
+    category_name = models.CharField(max_length=255, unique=True, verbose_name='Название категории')
+    slug = models.SlugField(max_length=255, unique=True, verbose_name='Слаг категории')
+    category_photo = models.ImageField(blank=True, verbose_name='Изображение категории')
 
     class Meta:
         verbose_name = _('Категория')
@@ -27,9 +27,9 @@ class BlogCategory(models.Model):
 
 
 class SubCategory(models.Model):
-    category = models.ForeignKey(BlogCategory, on_delete=models.CASCADE)
-    sub_category_name = models.CharField(max_length=255)
-    slug = models.SlugField(max_length=255)
+    category = models.ForeignKey(BlogCategory, on_delete=models.CASCADE, verbose_name='Внешний ключ категории')
+    sub_category_name = models.CharField(max_length=255, verbose_name='Название подкатегории')
+    slug = models.SlugField(max_length=255, verbose_name='Слаг подкатегории')
 
     def __str__(self):
         return self.sub_category_name
@@ -44,13 +44,13 @@ class SubCategory(models.Model):
 
 
 class Post(models.Model):
-    category = models.ForeignKey(SubCategory, on_delete=models.CASCADE)
-    author = models.ForeignKey(Author, on_delete=models.SET(_('Удаленный аккаунт')))
-    title = models.CharField(max_length=255)
-    text = models.TextField()
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-    is_published = models.BooleanField(default=True)
+    category = models.ForeignKey(SubCategory, on_delete=models.CASCADE, verbose_name='Внешний ключ подкатегории')
+    author = models.ForeignKey(Author, on_delete=models.SET(_('Удаленный аккаунт')), verbose_name='Внешний ключ автора')
+    title = models.CharField(max_length=255, verbose_name='Заголовок поста')
+    text = models.TextField(verbose_name='Пост')
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name='Время публикации поста')
+    updated_at = models.DateTimeField(auto_now=True, verbose_name='Время редактирования')
+    is_published = models.BooleanField(default=True, verbose_name='Опубликован', help_text='Опубликован ли пост')
 
     def get_absolute_url(self):
         return reverse('main:edit_post', kwargs={'pk': self.pk})
@@ -66,7 +66,7 @@ class Post(models.Model):
 
 class FeedBack(models.Model):
 
-    text = models.TextField()
+    text = models.TextField(verbose_name='Текст обратной связи')
 
     def __str__(self):
         return self.text
