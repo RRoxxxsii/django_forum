@@ -45,7 +45,7 @@ class CustomAccountManager(BaseUserManager):
 
 
 class Country(models.Model):
-    country = models.CharField(max_length=50)
+    country = models.CharField(max_length=50, verbose_name='Страна')
 
     def __str__(self):
         return self.country
@@ -57,7 +57,7 @@ class Country(models.Model):
 
 
 class Gender(models.Model):
-    gender = models.CharField(help_text=_('Гендер'), blank=True, max_length=40)
+    gender = models.CharField(help_text=_('Гендер'), blank=True, max_length=40, verbose_name='Пол')
 
     class Meta:
         verbose_name = 'Пол',
@@ -68,26 +68,29 @@ class Gender(models.Model):
 
 
 class Author(AbstractBaseUser, PermissionsMixin):
-    email = models.EmailField(_('почтовый адрес'), unique=True)
-    user_name = models.CharField(max_length=150, unique=True)
-    mobile = models.CharField(max_length=20, blank=True)
-    gender = models.ForeignKey(Gender, on_delete=models.SET_NULL, blank=True, null=True)
-    profile_photo = models.ImageField(upload_to='photos/%Y/%m/%d/', help_text=_('Фото профиля'), blank=True)
+    email = models.EmailField(verbose_name=_('Почтовый адрес'), unique=True)
+    user_name = models.CharField(max_length=150, unique=True, verbose_name='Имя пользователя')
+    mobile = models.CharField(max_length=20, blank=True, verbose_name='Номер телефона')
+    gender = models.ForeignKey(Gender, on_delete=models.SET_NULL, blank=True, null=True,
+                               verbose_name='Внешний ключ гендера')
+    profile_photo = models.ImageField(upload_to='photos/%Y/%m/%d/', help_text=_('Фото профиля'), blank=True,
+                                      verbose_name='Фото профиля')
 
-    profile_information = models.TextField(help_text='Расскажите о себе', blank=True)
-    country = models.ForeignKey(Country, on_delete=models.SET_NULL, blank=True, null=True)
-    telegram_link = models.URLField(_('Телеграмм аккаунт'), blank=True)
-    city = models.CharField(_('Где живете'), max_length=70, blank=True, null=True)
+    profile_information = models.TextField(help_text='Расскажите о себе', blank=True,
+                                           verbose_name='Персональная информация')
+    country = models.ForeignKey(Country, on_delete=models.SET_NULL, blank=True, null=True, verbose_name='Страна')
+    telegram_link = models.URLField(_('Телеграмм аккаунт'), blank=True, verbose_name='Телеграмм аккаунт')
+    city = models.CharField(_('Где живете'), max_length=70, blank=True, null=True, verbose_name='Город')
 
     following = models.ManyToManyField(
-        "self", blank=True, related_name="followers", symmetrical=False
+        "self", blank=True, related_name="followers", symmetrical=False, verbose_name='Подписки'
     )
 
     # User Status
-    is_active = models.BooleanField(default=False)
-    is_staff = models.BooleanField(default=False)
-    created = models.DateTimeField(auto_now_add=True)
-    updated = models.DateTimeField(auto_now=True)
+    is_active = models.BooleanField(default=False, help_text='Активен ли аккаунт?', verbose_name='Активен')
+    is_staff = models.BooleanField(default=False, help_text='Администратор ли сайта?', verbose_name='Администратора')
+    created = models.DateTimeField(auto_now_add=True, verbose_name='Дата регистрации')
+    updated = models.DateTimeField(auto_now=True, verbose_name='Дата обновления')
 
     objects = CustomAccountManager()
 
