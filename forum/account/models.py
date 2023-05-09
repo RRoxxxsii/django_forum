@@ -79,7 +79,7 @@ class Author(AbstractBaseUser, PermissionsMixin):
     profile_information = models.TextField(help_text='Расскажите о себе', blank=True,
                                            verbose_name='Персональная информация')
     country = models.ForeignKey(Country, on_delete=models.SET_NULL, blank=True, null=True, verbose_name='Страна')
-    telegram_link = models.URLField(_('Телеграмм аккаунт'), blank=True, verbose_name='Телеграмм аккаунт')
+    telegram_link = models.URLField(blank=True, verbose_name='Телеграмм аккаунт')
     city = models.CharField(_('Где живете'), max_length=70, blank=True, null=True, verbose_name='Город')
 
     following = models.ManyToManyField(
