@@ -1,7 +1,6 @@
 from account.models import Author
 from django.db import models
 from django.urls import reverse
-from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
 
 
@@ -45,7 +44,7 @@ class SubCategory(models.Model):
 
 class Post(models.Model):
     category = models.ForeignKey(SubCategory, on_delete=models.CASCADE, verbose_name='Внешний ключ подкатегории')
-    author = models.ForeignKey(Author, on_delete=models.SET(_('Удаленный аккаунт')), verbose_name='Внешний ключ автора')
+    author = models.ForeignKey(Author, on_delete=models.CASCADE, verbose_name='Внешний ключ автора')
     title = models.CharField(max_length=255, verbose_name='Заголовок поста')
     text = models.TextField(verbose_name='Пост')
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='Время публикации поста')
